@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { signOut } from "firebase/auth";
-import { auth } from "./firebase.js";
 import Login from "./components/Login.jsx";
 import Register from "./components/Register.jsx";
 import ThinkingForm from "./components/ThinkingForm.jsx";
@@ -12,36 +10,31 @@ import "./App.css";
 
 export default function App() {
   const [user, setUser] = useState(null);
-  const [page, setPage] = useState("login"); // "login" | "register"
+  const [page, setPage] = useState("login");
   const [feedback, setFeedback] = useState("");
-  const [theme, setTheme] = useState("light"); // "light" | "dark"
+  const [theme, setTheme] = useState("light");
 
-  // ✅ 로그아웃 처리
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-    } catch (e) {
-      console.warn("Firebase가 없으면 무시됨:", e.message);
-    }
+  // ✅ 로그아웃
+  const handleLogout = () => {
     setUser(null);
     setPage("login");
     setFeedback("");
   };
 
-  // ✅ 다크모드 / 라이트모드 토글
+  // ✅ 다크모드 토글
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
     document.documentElement.setAttribute("data-theme", newTheme);
   };
 
-  // ✅ ThinkingForm에서 AI 피드백 받아서 상태 저장
+  // ✅ AI 피드백 업데이트
   const handleFeedback = (aiFeedback) => {
     setFeedback(aiFeedback);
   };
 
-  // ✅ 관리자 여부 판별
-  const isAdmin = user && adminIds.includes(user.id || user.uid);
+  // ✅ 관리자 여부 확인
+  const isAdmin = user && adminIds.includes(user.id);
 
   return (
     <div className={`app-container ${theme}`}>
@@ -59,12 +52,20 @@ export default function App() {
         )
       ) : isAdmin ? (
         <>
-          <Header onLogout={handleLogout} onToggleTheme={toggleTheme} theme={theme} />
+          <Header
+            onLogout={handleLogout}
+            onToggleTheme={toggleTheme}
+            theme={theme}
+          />
           <AdminDashboard />
         </>
       ) : (
         <>
-          <Header onLogout={handleLogout} onToggleTheme={toggleTheme} theme={theme} />
+          <Header
+            onLogout={handleLogout}
+            onToggleTheme={toggleTheme}
+            theme={theme}
+          />
           <ThinkingForm user={user} onFeedback={handleFeedback} />
           <FeedbackDisplay feedback={feedback} />
         </>

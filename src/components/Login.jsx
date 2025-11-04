@@ -1,31 +1,22 @@
 // src/components/Login.jsx
 import { useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase.js";
 import "./Login.css";
 
 export default function Login({ onLogin, onSwitchToRegister }) {
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setLoading(true);
-    try {
-      // 아이디 → 이메일 형태로 변환
-      const email = `${id}@myapp.com`;
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      onLogin(userCredential.user);
-    } catch (error) {
-      alert("로그인 실패 😢 : " + error.message);
-    } finally {
-      setLoading(false);
+
+    // 간단한 예시: 비밀번호 검증은 일단 생략 가능 (나중에 Firestore로 연결 가능)
+    if (!id.trim()) {
+      alert("아이디를 입력해주세요!");
+      return;
     }
+
+    // 로그인 성공 시 App.jsx로 user 객체 전달
+    onLogin({ id }); 
   };
 
   return (
@@ -49,8 +40,8 @@ export default function Login({ onLogin, onSwitchToRegister }) {
           className="login-input"
           required
         />
-        <button type="submit" className="login-btn" disabled={loading}>
-          {loading ? "로그인 중..." : "로그인"}
+        <button type="submit" className="login-btn">
+          로그인
         </button>
       </form>
 
