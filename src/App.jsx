@@ -1,18 +1,22 @@
 import { useState } from "react";
 import { signOut } from "firebase/auth";
 import { auth } from "./firebase.js";
+
+// 컴포넌트 import
 import Login from "./components/Login.jsx";
 import Register from "./components/Register.jsx";
+import Header from "./components/Header.jsx";
 import ThinkingForm from "./components/ThinkingForm.jsx";
 import FeedbackDisplay from "./components/FeedbackDisplay.jsx";
-import "./App.css"; // 전체 레이아웃용 공통 스타일 (선택사항)
+
+import "./App.css"; // 전체 스타일 (선택사항)
 
 export default function App() {
   const [user, setUser] = useState(null);
   const [page, setPage] = useState("login"); // login | register
   const [feedback, setFeedback] = useState("");
 
-  // 로그아웃
+  // 🔹 로그아웃 기능
   const handleLogout = async () => {
     await signOut(auth);
     setUser(null);
@@ -20,7 +24,7 @@ export default function App() {
     setFeedback("");
   };
 
-  // ThinkingForm에서 받아온 피드백을 화면에 표시
+  // 🔹 ThinkingForm → AI 피드백 결과 받기
   const handleFeedback = (aiFeedback) => {
     setFeedback(aiFeedback);
   };
@@ -28,6 +32,7 @@ export default function App() {
   return (
     <div className="app-container">
       {!user ? (
+        // 로그인 / 회원가입 구분
         page === "login" ? (
           <Login
             onLogin={setUser}
@@ -41,18 +46,13 @@ export default function App() {
         )
       ) : (
         <>
-          {/* --- 상단 헤더 --- */}
-          <header className="app-header">
-            <h1 className="app-title">🧠 사고력 향상 프로젝트</h1>
-            <button onClick={handleLogout} className="logout-btn">
-              로그아웃
-            </button>
-          </header>
+          {/* --- 상단 헤더 컴포넌트 --- */}
+          <Header onLogout={handleLogout} />
 
           {/* --- 사고력 폼 --- */}
           <ThinkingForm user={user} onFeedback={handleFeedback} />
 
-          {/* --- AI 피드백 --- */}
+          {/* --- AI 피드백 표시 --- */}
           <FeedbackDisplay feedback={feedback} />
         </>
       )}
