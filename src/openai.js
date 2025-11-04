@@ -1,18 +1,11 @@
 // src/openai.js
-export async function getFeedbackFromAI(answer) {
-  const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
-
-  if (!apiKey) {
-    console.error("❌ OpenAI API key가 설정되어 있지 않습니다. (.env 확인)");
-    return "⚠️ 시스템 오류: OpenAI API Key가 없습니다. 관리자에게 문의하세요.";
-  }
-
+export async function getThinkingFeedback(formData) {
   try {
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
+        Authorization: `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
       },
       body: JSON.stringify({
         model: "gpt-4o-mini",
@@ -20,28 +13,50 @@ export async function getFeedbackFromAI(answer) {
           {
             role: "system",
             content:
-              "너는 사고력 코치야. 학생의 사고 답변을 분석하고 논리적 사고력, 비판적 사고력, 창의적 사고력을 구조적으로 피드백해줘. 결과는 1️⃣ 논리적 강점, 2️⃣ 비판적 사고 포인트, 3️⃣ 개선 방향 세 부분으로 나눠서 알려줘.",
+              "너는 사고력 코치야. 학생의 사고 과정을 분석하고, 논리적 사고력과 비판적 사고력에 대해 따뜻하고 구체적인 피드백을 제공해줘.",
           },
           {
             role: "user",
-            content: `학생의 사고 답변:\n${answer}`,
+            content: `
+학생의 사고 기록:
+
+날짜: ${formData.date}
+주제: ${formData.topic}
+문제 유형: ${formData.problemType.join(", ")}
+
+목표: ${formData.goal}
+선행 지식: ${formData.priorKnowledge}
+전략: ${formData.strategy}
+근거: ${formData.sources}
+분석: ${formData.analysis}
+협력: ${formData.collaboration}
+
+성과 평가: ${formData.evaluation}
+통찰: ${formData.reflection}
+어려움: ${formData.difficulty}
+감정 상태: ${formData.emotion}
+
+장기적 성찰: ${formData.longTermMeaning}
+실행 계획: ${formData.todo}
+기한: ${formData.deadline}
+참고 자료: ${formData.resources}
+
+비판적 사고 체크:
+${Object.entries(formData.criticalThinking)
+  .map(([k, v]) => `${k}: ${v ? "예" : "아니오"}`)
+  .join(", ")}
+`,
           },
         ],
         temperature: 0.7,
-        max_tokens: 800,
+        max_tokens: 500,
       }),
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`OpenAI API 오류: ${response.status} - ${errorText}`);
-    }
-
     const data = await response.json();
-    const feedback = data?.choices?.[0]?.message?.content || "피드백을 불러오지 못했습니다.";
-    return feedback;
-  } catch (err) {
-    console.error("🚨 OpenAI 요청 중 오류:", err);
-    return "⚠️ AI 피드백 생성 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.";
+    return data.choices?.[0]?.message?.content || "피드백 생성 실패 😢";
+  } catch (error) {
+    console.error("OpenAI 요청 오류:", error);
+    return "피드백 요청 중 오류가 발생했습니다 ❌";
   }
 }
