@@ -1,7 +1,7 @@
 // src/components/Register.jsx
 import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase";
+import { auth } from "../firebase.js";
 import "./Register.css";
 
 export default function Register({ onRegister, onSwitchToLogin }) {

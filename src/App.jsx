@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { signOut } from "firebase/auth";
-import { auth } from "./firebase";
+import { auth } from "./firebase.js";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import ThinkingForm from "./components/ThinkingForm";
