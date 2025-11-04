@@ -5,37 +5,42 @@ import { auth } from "../firebase.js";
 import "./Register.css";
 
 export default function Register({ onRegister, onSwitchToLogin }) {
-  const [text, setEmail] = useState("");
+  const [id, setId] = useState("");
   const [password, setPassword] = useState("");
-  const [confirm, setConfirm] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (password !== confirm) {
-      alert("비밀번호가 일치하지 않습니다 ❌");
-      return;
-    }
-
+    setLoading(true);
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      alert("회원가입이 완료되었습니다 🎉");
+      // 아이디 → 이메일 변환
+      const email = `${id}@myapp.com`;
+
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
       onRegister(userCredential.user);
     } catch (error) {
-      alert("회원가입 오류: " + error.message);
+      alert("회원가입 실패 😢 : " + error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="p-6 border rounded max-w-sm mx-auto mt-10 bg-white shadow">
-      <h2 className="text-xl font-bold text-center mb-4">회원가입 🧾</h2>
+    <div className="register-container">
+      <h2 className="register-title">회원가입 ✨</h2>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+      <form onSubmit={handleSubmit} className="register-form">
         <input
           type="text"
-          placeholder="ID 입력"
-          value={text}
-          onChange={(e) => setEmail(e.target.value)}
-          className="border p-2 rounded"
+          placeholder="아이디 입력"
+          value={id}
+          onChange={(e) => setId(e.target.value)}
+          className="register-input"
           required
         />
         <input
@@ -43,30 +48,17 @@ export default function Register({ onRegister, onSwitchToLogin }) {
           placeholder="비밀번호 입력"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="border p-2 rounded"
+          className="register-input"
           required
         />
-        <input
-          type="password"
-          placeholder="비밀번호 확인"
-          value={confirm}
-          onChange={(e) => setConfirm(e.target.value)}
-          className="border p-2 rounded"
-          required
-        />
-        <button className="bg-green-500 text-white py-2 rounded hover:bg-green-600">
-          회원가입
+        <button type="submit" className="register-btn" disabled={loading}>
+          {loading ? "가입 중..." : "회원가입"}
         </button>
       </form>
 
-      <p className="text-center mt-3 text-sm">
+      <p className="register-switch">
         이미 계정이 있나요?{" "}
-        <button
-          onClick={onSwitchToLogin}
-          className="text-blue-600 underline"
-        >
-          로그인하기
-        </button>
+        <button onClick={onSwitchToLogin}>로그인</button>
       </p>
     </div>
   );

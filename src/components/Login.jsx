@@ -5,30 +5,40 @@ import { auth } from "../firebase.js";
 import "./Login.css";
 
 export default function Login({ onLogin, onSwitchToRegister }) {
-  const [text, setEmail] = useState("");
+  const [id, setId] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      // 아이디 → 이메일 형태로 변환
+      const email = `${id}@myapp.com`;
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       onLogin(userCredential.user);
     } catch (error) {
       alert("로그인 실패 😢 : " + error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="p-6 border rounded max-w-sm mx-auto mt-10 bg-white shadow">
-      <h2 className="text-xl font-bold text-center mb-4">로그인 🔑</h2>
+    <div className="login-container">
+      <h2 className="login-title">로그인 🔑</h2>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+      <form onSubmit={handleSubmit} className="login-form">
         <input
           type="text"
-          placeholder="ID 입력"
-          value={text}
-          onChange={(e) => setEmail(e.target.value)}
-          className="border p-2 rounded"
+          placeholder="아이디 입력"
+          value={id}
+          onChange={(e) => setId(e.target.value)}
+          className="login-input"
           required
         />
         <input
@@ -36,22 +46,17 @@ export default function Login({ onLogin, onSwitchToRegister }) {
           placeholder="비밀번호 입력"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="border p-2 rounded"
+          className="login-input"
           required
         />
-        <button className="bg-blue-500 text-white py-2 rounded hover:bg-blue-600">
-          로그인
+        <button type="submit" className="login-btn" disabled={loading}>
+          {loading ? "로그인 중..." : "로그인"}
         </button>
       </form>
 
-      <p className="text-center mt-3 text-sm">
+      <p className="login-switch">
         계정이 없나요?{" "}
-        <button
-          onClick={onSwitchToRegister}
-          className="text-green-600 underline"
-        >
-          회원가입
-        </button>
+        <button onClick={onSwitchToRegister}>회원가입</button>
       </p>
     </div>
   );
