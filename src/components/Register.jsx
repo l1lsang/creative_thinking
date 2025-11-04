@@ -32,7 +32,7 @@ export default function Register({ onRegister, onSwitchToLogin }) {
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
         <input
           type="email"
-          placeholder="이메일 입력"
+          placeholder="ID 입력"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="border p-2 rounded"
