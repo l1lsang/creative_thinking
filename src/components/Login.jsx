@@ -5,7 +5,7 @@ import { auth } from "../firebase.js";
 import "./Login.css";
 
 export default function Login({ onLogin, onSwitchToRegister }) {
-  const [email, setEmail] = useState("");
+  const [text, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = async (e) => {
@@ -24,9 +24,9 @@ export default function Login({ onLogin, onSwitchToRegister }) {
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
         <input
-          type="email"
+          type="text"
           placeholder="ID 입력"
-          value={email}
+          value={text}
           onChange={(e) => setEmail(e.target.value)}
           className="border p-2 rounded"
           required
