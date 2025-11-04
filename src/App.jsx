@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { signOut } from "firebase/auth";
 import { auth } from "./firebase.js";
-import Login from "./components/Login";
-import Register from "./components/Register";
-import ThinkingForm from "./components/ThinkingForm";
-import FeedbackDisplay from "./components/FeedbackDisplay";
+import Login from "./components/Login.jsx";
+import Register from "./components/Register.jsx";
+import ThinkingForm from "./components/ThinkingForm.jsx";
+import FeedbackDisplay from "./components/FeedbackDisplay.jsx";
 import "./App.css"; // 전체 레이아웃용 공통 스타일 (선택사항)
 
 export default function App() {
