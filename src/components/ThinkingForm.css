@@ -1,125 +1,99 @@
-/* === 기본 설정 === */
 .thinking-form {
-  max-width: 750px;
-  margin: 0 auto;
-  font-family: "Pretendard", "NanumSquare", sans-serif;
-  line-height: 1.6;
-  color: #1f2937;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 720px;
+  margin: 0 auto 60px;
+  font-family: "Pretendard", sans-serif;
 }
 
-/* === 섹션 카드 === */
 .thinking-section {
   background: #ffffff;
+  padding: 20px 24px;
   border-radius: 16px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
-  padding: 24px;
-  margin-bottom: 24px;
-  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-.thinking-section:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-}
-
-/* === 섹션 제목 === */
-.thinking-section h2 {
+.thinking-title {
   font-size: 1.2rem;
   font-weight: 700;
-  color: #2563eb; /* 파란색 포인트 */
+  color: #2563eb;
   margin-bottom: 12px;
 }
 
-/* === 입력 요소 === */
+.thinking-subtitle {
+  margin-top: 16px;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #374151;
+}
+
 .thinking-input,
 .thinking-textarea {
   width: 100%;
-  padding: 10px 12px;
-  margin-top: 8px;
   border: 1.5px solid #e5e7eb;
   border-radius: 10px;
+  padding: 10px 12px;
   font-size: 0.95rem;
-  transition: border 0.2s, box-shadow 0.2s;
+  transition: border 0.2s;
+}
+
+.thinking-textarea {
+  min-height: 80px;
+  resize: vertical;
 }
 
 .thinking-input:focus,
 .thinking-textarea:focus {
+  border-color: #2563eb;
   outline: none;
-  border-color: #60a5fa;
-  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.3);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
 
-.thinking-textarea {
-  resize: vertical;
-  min-height: 70px;
+.thinking-checkbox-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 16px;
+  margin-top: 8px;
 }
 
-/* === 체크박스/라디오 === */
-.thinking-checkbox,
-.thinking-radio {
-  accent-color: #3b82f6;
-  transform: scale(1.1);
-  margin-right: 4px;
+.thinking-checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  color: #374151;
+  background: #f9fafb;
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition: background 0.2s;
 }
 
-/* === 버튼 === */
-.thinking-submit {
-  background: linear-gradient(90deg, #3b82f6, #06b6d4);
+.thinking-checkbox-item:hover {
+  background: #f3f4f6;
+}
+
+.thinking-checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: #2563eb;
+}
+
+.thinking-radio-group label {
+  margin-right: 10px;
+}
+
+.thinking-submit-btn {
+  background: linear-gradient(90deg, #2563eb, #3b82f6);
   color: white;
   border: none;
   border-radius: 10px;
   padding: 14px;
-  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.2s;
 }
 
-.thinking-submit:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-}
-
-.thinking-submit:disabled {
-  background: #9ca3af;
-  cursor: not-allowed;
-}
-
-/* === 안내문 섹션 === */
-.thinking-guide {
-  background: #f9fafb;
-  border-radius: 12px;
-  padding: 20px;
-  font-size: 0.9rem;
-  color: #4b5563;
-  border-left: 4px solid #3b82f6;
-  margin-top: 30px;
-}
-
-.thinking-guide h2 {
-  text-align: center;
-  font-weight: 700;
-  color: #2563eb;
-  margin-bottom: 8px;
-}
-
-.thinking-guide ul,
-.thinking-guide ol {
-  margin-left: 20px;
-  margin-bottom: 10px;
-}
-
-.thinking-guide li {
-  margin-bottom: 4px;
-}
-
-/* === 반응형 === */
-@media (max-width: 600px) {
-  .thinking-section {
-    padding: 18px;
-  }
-  .thinking-submit {
-    font-size: 0.9rem;
-    padding: 12px;
-  }
+.thinking-submit-btn:hover {
+  transform: translateY(-2px);
 }
