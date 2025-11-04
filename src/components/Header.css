@@ -1,0 +1,30 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #2563eb;
+  color: white;
+  padding: 14px 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.header-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.header-btn {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.header-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+}

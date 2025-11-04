@@ -1,0 +1,39 @@
+.app-container {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  font-family: "Pretendard", "NanumSquare", sans-serif;
+  background: #f3f4f6;
+  min-height: 100vh;
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #2563eb;
+  color: white;
+  padding: 14px 20px;
+  border-radius: 10px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.app-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.logout-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  color: white;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.logout-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+}

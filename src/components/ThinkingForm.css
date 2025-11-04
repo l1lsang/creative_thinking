@@ -1,0 +1,125 @@
+/* === 기본 설정 === */
+.thinking-form {
+  max-width: 750px;
+  margin: 0 auto;
+  font-family: "Pretendard", "NanumSquare", sans-serif;
+  line-height: 1.6;
+  color: #1f2937;
+}
+
+/* === 섹션 카드 === */
+.thinking-section {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+  padding: 24px;
+  margin-bottom: 24px;
+  transition: all 0.3s ease;
+}
+
+.thinking-section:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+/* === 섹션 제목 === */
+.thinking-section h2 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #2563eb; /* 파란색 포인트 */
+  margin-bottom: 12px;
+}
+
+/* === 입력 요소 === */
+.thinking-input,
+.thinking-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  margin-top: 8px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+.thinking-input:focus,
+.thinking-textarea:focus {
+  outline: none;
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.3);
+}
+
+.thinking-textarea {
+  resize: vertical;
+  min-height: 70px;
+}
+
+/* === 체크박스/라디오 === */
+.thinking-checkbox,
+.thinking-radio {
+  accent-color: #3b82f6;
+  transform: scale(1.1);
+  margin-right: 4px;
+}
+
+/* === 버튼 === */
+.thinking-submit {
+  background: linear-gradient(90deg, #3b82f6, #06b6d4);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 14px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.thinking-submit:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.thinking-submit:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* === 안내문 섹션 === */
+.thinking-guide {
+  background: #f9fafb;
+  border-radius: 12px;
+  padding: 20px;
+  font-size: 0.9rem;
+  color: #4b5563;
+  border-left: 4px solid #3b82f6;
+  margin-top: 30px;
+}
+
+.thinking-guide h2 {
+  text-align: center;
+  font-weight: 700;
+  color: #2563eb;
+  margin-bottom: 8px;
+}
+
+.thinking-guide ul,
+.thinking-guide ol {
+  margin-left: 20px;
+  margin-bottom: 10px;
+}
+
+.thinking-guide li {
+  margin-bottom: 4px;
+}
+
+/* === 반응형 === */
+@media (max-width: 600px) {
+  .thinking-section {
+    padding: 18px;
+  }
+  .thinking-submit {
+    font-size: 0.9rem;
+    padding: 12px;
+  }
+}
