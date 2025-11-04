@@ -1,46 +1,47 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { signOut } from "firebase/auth";
 import { auth } from "./firebase.js";
-
 import Login from "./components/Login.jsx";
 import Register from "./components/Register.jsx";
-import Header from "./components/Header.jsx";
 import ThinkingForm from "./components/ThinkingForm.jsx";
 import FeedbackDisplay from "./components/FeedbackDisplay.jsx";
+import Header from "./components/Header.jsx";
+import AdminDashboard from "./pages/AdminDashboard.jsx";
+import { adminIds } from "./config/adminConfig.js";
 import "./App.css";
 
 export default function App() {
   const [user, setUser] = useState(null);
-  const [page, setPage] = useState("login");
+  const [page, setPage] = useState("login"); // "login" | "register"
   const [feedback, setFeedback] = useState("");
-  const [theme, setTheme] = useState("light"); // 🌗 라이트모드 기본
+  const [theme, setTheme] = useState("light"); // "light" | "dark"
 
-  // 🔹 테마 로드 (새로고침 후에도 유지)
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") || "light";
-    setTheme(savedTheme);
-    document.documentElement.setAttribute("data-theme", savedTheme);
-  }, []);
-
-  // 🔹 테마 토글 함수
-  const toggleTheme = () => {
-    const newTheme = theme === "light" ? "dark" : "light";
-    setTheme(newTheme);
-    document.documentElement.setAttribute("data-theme", newTheme);
-    localStorage.setItem("theme", newTheme);
-  };
-
-  // 로그아웃
+  // ✅ 로그아웃 처리
   const handleLogout = async () => {
-    await signOut(auth);
+    try {
+      await signOut(auth);
+    } catch (e) {
+      console.warn("Firebase가 없으면 무시됨:", e.message);
+    }
     setUser(null);
     setPage("login");
     setFeedback("");
   };
 
+  // ✅ 다크모드 / 라이트모드 토글
+  const toggleTheme = () => {
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
+    document.documentElement.setAttribute("data-theme", newTheme);
+  };
+
+  // ✅ ThinkingForm에서 AI 피드백 받아서 상태 저장
   const handleFeedback = (aiFeedback) => {
     setFeedback(aiFeedback);
   };
+
+  // ✅ 관리자 여부 판별
+  const isAdmin = user && adminIds.includes(user.id || user.uid);
 
   return (
     <div className={`app-container ${theme}`}>
@@ -56,15 +57,15 @@ export default function App() {
             onSwitchToLogin={() => setPage("login")}
           />
         )
+      ) : isAdmin ? (
+        <>
+          <Header onLogout={handleLogout} onToggleTheme={toggleTheme} theme={theme} />
+          <AdminDashboard />
+        </>
       ) : (
         <>
-          {/* --- 상단 헤더 --- */}
           <Header onLogout={handleLogout} onToggleTheme={toggleTheme} theme={theme} />
-
-          {/* --- 사고력 폼 --- */}
           <ThinkingForm user={user} onFeedback={handleFeedback} />
-
-          {/* --- 피드백 --- */}
           <FeedbackDisplay feedback={feedback} />
         </>
       )}

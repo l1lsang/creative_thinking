@@ -97,3 +97,38 @@
 .thinking-submit-btn:hover {
   transform: translateY(-2px);
 }
+/* 안내문 스타일 */
+.thinking-guide {
+  background: var(--card-bg);
+  color: var(--text);
+  border-left: 6px solid #2563eb;
+  padding: 24px 28px;
+  border-radius: 16px;
+  margin-bottom: 30px;
+  line-height: 1.6;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.thinking-guide-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #2563eb;
+  margin-bottom: 10px;
+}
+
+.thinking-guide ul,
+.thinking-guide ol {
+  margin-left: 20px;
+  margin-top: 8px;
+}
+
+.thinking-guide li {
+  margin-bottom: 6px;
+  font-size: 0.95rem;
+}
+
+.thinking-guide h3 {
+  font-weight: 600;
+  margin-top: 12px;
+  color: #1e40af;
+}
