@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase.js";
-import { getThinkingFeedback } from "../openai.js";
+import { getFeedbackFromAI } from "../openai.js";
 import "./ThinkingForm.css";
 
 export default function ThinkingForm({ user, onFeedback }) {
