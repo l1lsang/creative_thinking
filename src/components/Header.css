@@ -2,8 +2,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #2563eb;
-  color: white;
+  background: var(--header-bg);
+  color: var(--text);
   padding: 14px 24px;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -14,7 +14,14 @@
   font-weight: 700;
 }
 
-.header-btn {
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-btn,
+.theme-btn {
   background: rgba(255, 255, 255, 0.15);
   color: white;
   border: none;
@@ -25,6 +32,7 @@
   transition: background 0.2s;
 }
 
-.header-btn:hover {
+.header-btn:hover,
+.theme-btn:hover {
   background: rgba(255, 255, 255, 0.25);
 }

@@ -1,39 +1,31 @@
+:root {
+  --bg: #f9fafb;
+  --text: #1f2937;
+  --card-bg: #ffffff;
+  --header-bg: #2563eb;
+}
+
+[data-theme="dark"] {
+  --bg: #0f172a;
+  --text: #e5e7eb;
+  --card-bg: #1e293b;
+  --header-bg: #334155;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  transition: background 0.3s, color 0.3s;
+}
+
 .app-container {
-  max-width: 820px;
-  margin: 0 auto;
-  padding: 40px 20px;
-  font-family: "Pretendard", "NanumSquare", sans-serif;
-  background: #353536;
   min-height: 100vh;
+  padding: 20px;
+  transition: all 0.3s ease;
 }
 
-.app-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #2563eb;
-  color: white;
-  padding: 14px 20px;
-  border-radius: 10px;
-  margin-bottom: 24px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.app-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-}
-
-.logout-btn {
-  background: rgba(255, 255, 255, 0.15);
-  border: none;
-  border-radius: 6px;
-  padding: 6px 12px;
-  color: white;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.logout-btn:hover {
-  background: rgba(255, 255, 255, 0.25);
+.thinking-section {
+  background: var(--card-bg);
+  color: var(--text);
+  transition: background 0.3s, color 0.3s;
 }

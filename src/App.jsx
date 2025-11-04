@@ -1,22 +1,36 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { signOut } from "firebase/auth";
 import { auth } from "./firebase.js";
 
-// 컴포넌트 import
 import Login from "./components/Login.jsx";
 import Register from "./components/Register.jsx";
 import Header from "./components/Header.jsx";
 import ThinkingForm from "./components/ThinkingForm.jsx";
 import FeedbackDisplay from "./components/FeedbackDisplay.jsx";
-
-import "./App.css"; // 전체 스타일 (선택사항)
+import "./App.css";
 
 export default function App() {
   const [user, setUser] = useState(null);
-  const [page, setPage] = useState("login"); // login | register
+  const [page, setPage] = useState("login");
   const [feedback, setFeedback] = useState("");
+  const [theme, setTheme] = useState("light"); // 🌗 라이트모드 기본
 
-  // 🔹 로그아웃 기능
+  // 🔹 테마 로드 (새로고침 후에도 유지)
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme") || "light";
+    setTheme(savedTheme);
+    document.documentElement.setAttribute("data-theme", savedTheme);
+  }, []);
+
+  // 🔹 테마 토글 함수
+  const toggleTheme = () => {
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
+    document.documentElement.setAttribute("data-theme", newTheme);
+    localStorage.setItem("theme", newTheme);
+  };
+
+  // 로그아웃
   const handleLogout = async () => {
     await signOut(auth);
     setUser(null);
@@ -24,15 +38,13 @@ export default function App() {
     setFeedback("");
   };
 
-  // 🔹 ThinkingForm → AI 피드백 결과 받기
   const handleFeedback = (aiFeedback) => {
     setFeedback(aiFeedback);
   };
 
   return (
-    <div className="app-container">
+    <div className={`app-container ${theme}`}>
       {!user ? (
-        // 로그인 / 회원가입 구분
         page === "login" ? (
           <Login
             onLogin={setUser}
@@ -46,13 +58,13 @@ export default function App() {
         )
       ) : (
         <>
-          {/* --- 상단 헤더 컴포넌트 --- */}
-          <Header onLogout={handleLogout} />
+          {/* --- 상단 헤더 --- */}
+          <Header onLogout={handleLogout} onToggleTheme={toggleTheme} theme={theme} />
 
           {/* --- 사고력 폼 --- */}
           <ThinkingForm user={user} onFeedback={handleFeedback} />
 
-          {/* --- AI 피드백 표시 --- */}
+          {/* --- 피드백 --- */}
           <FeedbackDisplay feedback={feedback} />
         </>
       )}
