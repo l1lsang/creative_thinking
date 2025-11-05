@@ -1,0 +1,59 @@
+.record-detail-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 24px;
+  background: var(--card-bg);
+  border-radius: 14px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  color: var(--text);
+}
+
+.back-btn {
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  margin-bottom: 20px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.back-btn:hover {
+  background: #1e40af;
+}
+
+.record-title {
+  font-size: 1.6rem;
+  color: #2563eb;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.record-author,
+.record-date {
+  font-size: 0.9rem;
+  color: #64748b;
+  margin-bottom: 8px;
+}
+
+.record-section {
+  margin-top: 24px;
+  background: var(--bg);
+  padding: 16px;
+  border-radius: 10px;
+}
+
+.record-section h2 {
+  color: #1d4ed8;
+  margin-bottom: 8px;
+}
+
+.ai-feedback-box {
+  background: #f9fafb;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
