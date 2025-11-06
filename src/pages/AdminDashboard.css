@@ -213,3 +213,31 @@
   line-height: 1.6;
   white-space: pre-wrap;
 }
+/* 상세 데이터 테이블 */
+.record-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  margin-top: 10px;
+}
+
+.record-table tr:nth-child(even) {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.record-table td {
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 6px 10px;
+  vertical-align: top;
+}
+
+.record-key {
+  width: 160px;
+  font-weight: 600;
+  color: #2563eb;
+}
+
+.record-value {
+  white-space: pre-wrap;
+  color: var(--text);
+}
