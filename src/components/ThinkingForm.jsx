@@ -64,7 +64,7 @@ export default function ThinkingForm({ user, onFeedback }) {
     try {
       // Firestore에 저장
       await addDoc(collection(db, "thinkingRecords"), {
-        userId: user.uid,
+        userId: user.id,
         email: user.email,
         ...form,
         createdAt: serverTimestamp(),
