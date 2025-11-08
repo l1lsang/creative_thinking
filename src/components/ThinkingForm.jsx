@@ -166,13 +166,7 @@ export default function ThinkingForm({ user, onFeedback }) {
         <h3>3️⃣ 세부 문제 유형</h3>
         <div className="choice-grid">
           {[
-            "요약하기",
-            "추론하기",
-            "비판하기",
-            "해석하기",
-            "적용하기",
-            "통합하기",
-            "창의적 해결",
+            "정확성", "시간", "지문", "문제", "연습", "연구"
           ].map((type) => (
             <button
               key={type}

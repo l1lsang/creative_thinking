@@ -1,147 +1,69 @@
 import { useEffect, useState } from "react";
 import { collection, query, where, orderBy, getDocs } from "firebase/firestore";
-import { db } from "../firebase.js";
-import MindMap from "../components/MindMap.jsx";
+import { db } from "../firebase";
 import "./MyRecords.css";
 
 export default function MyRecords({ user }) {
   const [records, setRecords] = useState([]);
+  const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [selectedRecord, setSelectedRecord] = useState(null);
 
-  // 🔹 Firestore에서 나의 기록 불러오기
   useEffect(() => {
     if (!user?.id) return;
-
-    const fetchRecords = async () => {
+    const fetchData = async () => {
       try {
         const q = query(
           collection(db, "thinkingRecords"),
           where("userId", "==", user.id),
           orderBy("createdAt", "desc")
         );
-
         const snapshot = await getDocs(q);
-        const data = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setRecords(data);
-      } catch (error) {
-        console.error("기록 불러오기 오류:", error);
-        alert("기록을 불러오는 중 오류가 발생했습니다 ❌");
+        setRecords(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+      } catch (e) {
+        console.error("기록 불러오기 오류:", e);
       } finally {
         setLoading(false);
       }
     };
-
-    fetchRecords();
+    fetchData();
   }, [user]);
 
-  if (loading) return <p className="myrecords-loading">불러오는 중...</p>;
+  if (loading) return <p>불러오는 중...</p>;
 
   return (
-    <div className="myrecords-container">
-      <h1 className="myrecords-title">📘 나의 사고 기록</h1>
-      <p className="myrecords-subtitle">총 {records.length}개의 기록이 있습니다.</p>
-
-      {/* === 기록 카드 목록 === */}
-      <div className="myrecords-list">
-        {records.map((record) => (
+    <div className="records-container">
+      <h2>📚 나의 사고 기록 ({records.length})</h2>
+      <div className="records-grid">
+        {records.map((r) => (
           <div
-            key={record.id}
-            className="myrecords-card"
-            onClick={() => setSelectedRecord(record)}
+            key={r.id}
+            className="record-card"
+            onClick={() => setSelected(r)}
           >
-            <h3>{record.topic || "제목 없음"}</h3>
-            <p><strong>날짜:</strong> {record.date || "-"}</p>
-            <p><strong>평가 점수:</strong> {record.evaluation || "미입력"}</p>
-            <p className="ellipsis"><strong>목표:</strong> {record.goal}</p>
+            <h4>{r.topic}</h4>
+            <p>{r.date}</p>
+            <p>{r.category} / {r.subCategory?.join(", ")}</p>
           </div>
         ))}
       </div>
 
-      {/* === 상세 모달 === */}
-      {selectedRecord && (
-        <div className="record-modal">
-          <div className="record-modal-content">
-            <button className="close-btn" onClick={() => setSelectedRecord(null)}>닫기 ✖</button>
-
-            <h2>🧠 {selectedRecord.topic || "제목 없음"}</h2>
-            <p><strong>날짜:</strong> {selectedRecord.date}</p>
-            <p><strong>문제 유형:</strong> {selectedRecord.problemType?.join(", ")}</p>
-            <p><strong>목표:</strong> {selectedRecord.goal}</p>
-            <p><strong>전략:</strong> {selectedRecord.strategy}</p>
-            <p><strong>근거:</strong> {selectedRecord.sources}</p>
-            <p><strong>분석:</strong> {selectedRecord.analysis}</p>
-            <p><strong>협력:</strong> {selectedRecord.collaboration}</p>
-            <p><strong>통찰:</strong> {selectedRecord.reflection}</p>
-            <p><strong>어려움:</strong> {selectedRecord.difficulty}</p>
-            <p><strong>감정:</strong> {selectedRecord.emotion}</p>
-            <p><strong>장기적 성찰:</strong> {selectedRecord.longTermMeaning}</p>
-            <p><strong>실행 계획:</strong> {selectedRecord.todo}</p>
-            <p><strong>기한:</strong> {selectedRecord.deadline}</p>
-
-            {/* === ✅ AI 피드백 === */}
-            {selectedRecord.aiFeedback && (
+      {selected && (
+        <div className="modal">
+          <div className="modal-content">
+            <button onClick={() => setSelected(null)}>닫기 ✖</button>
+            <h3>{selected.topic}</h3>
+            <p><b>문제영역:</b> {selected.category}</p>
+            <p><b>초점:</b> {selected.subCategory?.join(", ")}</p>
+            <p><b>유형:</b> {selected.problemType?.join(", ")}</p>
+            <p><b>목표:</b> {selected.goal}</p>
+            <p><b>전략:</b> {selected.strategy}</p>
+            <p><b>성찰:</b> {selected.reflection}</p>
+            <p><b>어려움:</b> {selected.difficulty}</p>
+            {selected.aiFeedback && (
               <>
-                <h3>🤖 AI 피드백</h3>
-                {(() => {
-                  try {
-                    let parsed = selectedRecord.aiFeedback;
-
-                    // 문자열이면 JSON 파싱 시도
-                    if (typeof parsed === "string") {
-                      try {
-                        parsed = JSON.parse(parsed);
-                      } catch {
-                        // 파싱 실패 → 그대로 유지
-                      }
-                    }
-
-                    // 객체면 문자열로 변환하여 표시
-                    if (parsed && typeof parsed === "object") {
-                      return (
-                        <>
-                          <pre className="ai-feedback-box">
-                            {JSON.stringify(parsed, null, 2)}
-                          </pre>
-
-                          {/* 사고 흐름 시각화 */}
-                          <h3>🗺 사고 흐름 시각화</h3>
-                          <MindMap feedback={parsed} />
-                        </>
-                      );
-                    }
-
-                    // 문자열 그대로 출력
-                    return (
-                      <pre className="ai-feedback-box">
-                        {String(parsed)}
-                      </pre>
-                    );
-                  } catch (err) {
-                    console.error("⚠️ aiFeedback 렌더링 오류:", err);
-                    return (
-                      <pre className="ai-feedback-box">
-                        {String(selectedRecord.aiFeedback)}
-                      </pre>
-                    );
-                  }
-                })()}
+                <h4>🤖 AI 피드백</h4>
+                <pre>{JSON.stringify(selected.aiFeedback, null, 2)}</pre>
               </>
-            )}
-
-            {/* === AI 분석 점수 === */}
-            {(selectedRecord.logicScore ||
-              selectedRecord.criticalScore ||
-              selectedRecord.improvementScore) && (
-              <div className="score-section">
-                <h3>📊 AI 분석 점수</h3>
-                <p>논리적 사고력: {selectedRecord.logicScore || "-"}점</p>
-                <p>비판적 사고력: {selectedRecord.criticalScore || "-"}점</p>
-                <p>개선 제안 점수: {selectedRecord.improvementScore || "-"}점</p>
-              </div>
             )}
           </div>
         </div>

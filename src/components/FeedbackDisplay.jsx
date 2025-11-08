@@ -1,82 +1,87 @@
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 import "./FeedbackDisplay.css";
 
 export default function FeedbackDisplay({ feedback }) {
   if (!feedback) return null;
 
-  // 🔒 1️⃣ 피드백이 문자열인 경우 (정상 출력)
-  if (typeof feedback === "string") {
-    return (
-      <div className="feedback-container">
-        <h3 className="feedback-title">💬 AI 피드백</h3>
-        <p>{feedback}</p>
-      </div>
-    );
-  }
+  // 점수 그래프 데이터
+  const data = [
+    { name: "논리적 사고력", value: feedback.logicScore || 70 },
+    { name: "비판적 사고력", value: feedback.criticalScore || 60 },
+    { name: "개선 가능성", value: feedback.improvementScore || 50 },
+  ];
+  const COLORS = ["#3b82f6", "#10b981", "#f59e0b"];
 
-  // 🔒 2️⃣ 피드백이 객체인 경우
-  if (typeof feedback === "object" && feedback !== null) {
-    // JSON 전체를 예쁘게 보기 (임시 fallback)
-    const safePreview = JSON.stringify(feedback, null, 2);
+  // 피드백 텍스트 생성 함수
+  const renderTextFeedback = () => {
+    const parts = [];
 
-    return (
-      <div className="feedback-container">
-        <h3 className="feedback-title">💬 사고력 AI 피드백</h3>
+    // 1️⃣ 메타 요약
+    if (feedback.meta?.요약) {
+      parts.push(`🧭 ${feedback.meta.요약}`);
+    }
 
-        {/* === meta 섹션 === */}
-        {"meta" in feedback && (
-          <div className="feedback-meta">
-            <p><strong>요약:</strong> {String(feedback.meta?.요약 || "-")}</p>
-            <p><strong>톤:</strong> {String(feedback.meta?.톤 || "-")}</p>
-            <p><strong>질문 수:</strong> {String(feedback.meta?.총_질문_개수 || 0)}</p>
-          </div>
-        )}
+    // 2️⃣ 평가 요약
+    if (feedback.평가 && typeof feedback.평가 === "object") {
+      parts.push("\n📋 **세부 피드백 요약**");
+      Object.entries(feedback.평가).forEach(([key, section]) => {
+        const title = key.replace(/\d+_|_/g, " ").trim();
+        if (typeof section === "object") {
+          let text = section.평가 || section.근거 || section.핵심정리 || "";
+          const questions = Array.isArray(section.질문)
+            ? section.질문.join(" / ")
+            : "";
+          parts.push(`\n🔹 ${title} → ${text}${questions ? ` (${questions})` : ""}`);
+        }
+      });
+    }
 
-        {/* === 평가 섹션 === */}
-        {"평가" in feedback && typeof feedback.평가 === "object" && (
-          <div className="feedback-section">
-            {Object.entries(feedback.평가).map(([key, val]) => {
-              if (!val || typeof val !== "object") return null;
-              return (
-                <div key={key} className="feedback-card">
-                  <h4>🧩 {String(key)}</h4>
-                  {val.평가 && <p>💡 {String(val.평가)}</p>}
-                  {val.질문 &&
-                    (Array.isArray(val.질문)
-                      ? val.질문.map((q, i) => <p key={i}>❓ {String(q)}</p>)
-                      : <p>❓ {String(val.질문)}</p>)}
-                </div>
-              );
-            })}
-          </div>
-        )}
+    // 3️⃣ 다음 행동
+    if (feedback["다음_행동(당장_실행_1~3개)"]) {
+      const actions = feedback["다음_행동(당장_실행_1~3개)"]
+        .map((a, i) => `➡️ ${a}`)
+        .join("\n");
+      parts.push(`\n🚀 **다음 실행 계획**\n${actions}`);
+    }
 
-        {/* === 다음 행동 === */}
-        {Array.isArray(feedback["다음_행동(당장_실행_1~3개)"]) && (
-          <div className="feedback-section">
-            <h4>🚀 다음 행동</h4>
-            <ul>
-              {feedback["다음_행동(당장_실행_1~3개)"].map((item, i) => (
-                <li key={i}>✅ {String(item)}</li>
-              ))}
-            </ul>
-          </div>
-        )}
+    return parts.join("\n");
+  };
 
-        {/* === 혹시 다른 구조의 객체일 경우 === */}
-        {!("평가" in feedback) && !("meta" in feedback) && (
-          <pre style={{ background: "#111", color: "#eee", padding: "12px" }}>
-            {safePreview}
-          </pre>
-        )}
-      </div>
-    );
-  }
-
-  // 🔒 3️⃣ 안전한 fallback
   return (
-    <div className="feedback-container">
-      <h3 className="feedback-title">💬 AI 피드백</h3>
-      <pre>{String(feedback)}</pre>
+    <div className="feedback-display">
+      <h3>🤖 AI 피드백 요약</h3>
+
+      {/* === 점수 차트 === */}
+      <ResponsiveContainer width="100%" height={250}>
+        <PieChart>
+          <Pie
+            data={data}
+            dataKey="value"
+            cx="50%"
+            cy="50%"
+            outerRadius={90}
+            label
+          >
+            {data.map((_, i) => (
+              <Cell key={i} fill={COLORS[i % COLORS.length]} />
+            ))}
+          </Pie>
+          <Tooltip />
+          <Legend />
+        </PieChart>
+      </ResponsiveContainer>
+
+      {/* === 줄글 형태 피드백 === */}
+      <div className="feedback-text">
+        <p style={{ whiteSpace: "pre-wrap" }}>{renderTextFeedback()}</p>
+      </div>
     </div>
   );
 }

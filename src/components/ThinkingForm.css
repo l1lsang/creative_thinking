@@ -1,67 +1,73 @@
 .thinking-form {
-  max-width: 800px;
-  margin: 0 auto;
-  background: #ffffff;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  max-width: 700px;
+  margin: auto;
+  padding: 25px;
+  border-radius: var(--border-radius);
+  background: var(--card-bg);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  transition: var(--transition);
 }
 
-.form-section {
-  margin-top: 1.2rem;
+.thinking-form h2 {
+  text-align: center;
+  margin-bottom: 20px;
 }
 
 .form-row {
+  margin-bottom: 16px;
   display: flex;
   flex-direction: column;
-  margin-top: 1rem;
 }
 
 .form-row label {
   font-weight: 600;
-  color: #1e3a8a;
-  margin-bottom: 0.3rem;
+  margin-bottom: 6px;
+}
+
+.form-row input,
+.form-row textarea {
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  resize: vertical;
+  background: var(--bg-light);
+  color: var(--text-light);
+  transition: var(--transition);
 }
 
 .choice-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.6rem;
-  margin-top: 0.6rem;
+  gap: 10px;
 }
 
 .choice-btn {
-  background: #f1f5f9;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  padding: 0.5rem 1rem;
+  padding: 8px 12px;
+  border: 1px solid #9ca3af;
+  background: var(--bg-light);
+  border-radius: 6px;
   cursor: pointer;
-  transition: all 0.2s;
-}
-
-.choice-btn:hover {
-  background: #e0f2fe;
+  transition: var(--transition);
 }
 
 .choice-btn.selected {
-  background: #2563eb;
+  background: var(--accent);
   color: white;
-  border-color: #1d4ed8;
-  transform: scale(1.05);
+  border-color: var(--accent);
 }
 
 .submit-btn {
-  margin-top: 1.5rem;
-  background: #2563eb;
-  color: white;
+  width: 100%;
+  padding: 14px;
   border: none;
-  padding: 0.8rem 1.2rem;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: background 0.25s;
+  border-radius: var(--border-radius);
+  background: var(--accent);
+  color: white;
   font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
 }
 
 .submit-btn:hover {
-  background: #1e40af;
+  background: #1d4ed8;
 }

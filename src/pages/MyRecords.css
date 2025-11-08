@@ -1,84 +1,62 @@
 .myrecords-container {
-  max-width: 900px;
-  margin: 40px auto;
+  max-width: 1000px;
+  margin: auto;
   padding: 20px;
-  color: var(--text);
 }
 
 .myrecords-title {
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: #2563eb;
-  margin-bottom: 10px;
-}
-
-.myrecords-subtitle {
-  color: #64748b;
-  margin-bottom: 20px;
+  text-align: center;
 }
 
 .myrecords-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+  margin-top: 20px;
 }
 
 .myrecords-card {
   background: var(--card-bg);
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  padding: 15px;
+  border-radius: var(--border-radius);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
   cursor: pointer;
-  transition: transform 0.2s;
+  transition: var(--transition);
 }
 
 .myrecords-card:hover {
   transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
-.ellipsis {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  color: #475569;
-}
-
-/* 모달 */
 .record-modal {
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.5);
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.6);
   display: flex;
-  align-items: center;
   justify-content: center;
-  z-index: 999;
+  align-items: center;
+  z-index: 50;
 }
 
 .record-modal-content {
-  background: white;
-  color: black;
-  border-radius: 12px;
-  padding: 20px;
+  background: var(--card-bg);
+  padding: 25px;
+  border-radius: var(--border-radius);
   width: 90%;
   max-width: 700px;
   max-height: 80vh;
   overflow-y: auto;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
 }
 
 .close-btn {
-  float: right;
-  background: none;
+  background: #ef4444;
   border: none;
-  font-size: 1rem;
+  color: white;
+  border-radius: 6px;
+  padding: 6px 10px;
+  float: right;
   cursor: pointer;
-  color: #555;
-}
-
-.ai-feedback-box {
-  background: #f8fafc;
-  padding: 10px;
-  border-radius: 8px;
-  white-space: pre-wrap;
-  font-size: 0.95rem;
 }
