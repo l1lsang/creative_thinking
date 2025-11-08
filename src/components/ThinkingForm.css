@@ -39,23 +39,9 @@
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  color :#1d4ed8;
+  color :#ffffff;
 }
 
-.choice-btn {
-  padding: 8px 12px;
-  border: 1px solid #9ca3af;
-  background: var(--bg-light);
-  border-radius: 6px;
-  cursor: pointer;
-  transition: var(--transition);
-}
-
-.choice-btn.selected {
-  background: var(--accent);
-  color: white;
-  border-color: var(--accent);
-}
 
 .submit-btn {
   width: 100%;
@@ -71,4 +57,46 @@
 
 .submit-btn:hover {
   background: #1d4ed8;
+}
+/* === 선택 버튼 그리드 === */
+.choice-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.choice-btn {
+  background: var(--card-bg);
+  color: var(--text-light); /* ✅ 라이트 모드에서는 검정 글씨 */
+  border: 2px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 8px 14px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: var(--transition);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.choice-btn:hover {
+  background: var(--accent);
+  color: white;
+}
+
+.choice-btn.selected {
+  background: var(--accent);
+  color: white;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+}
+
+/* === 다크모드 대응 === */
+[data-theme="dark"] .choice-btn {
+  background: var(--card-dark);
+  color: #f9fafb;
+  border: 2px solid var(--accent);
+}
+
+[data-theme="dark"] .choice-btn.selected {
+  background: var(--accent);
+  color: white;
 }
