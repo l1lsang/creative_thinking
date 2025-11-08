@@ -1,4 +1,3 @@
-// src/openai.js
 export async function getThinkingFeedback(formData) {
   try {
     const res = await fetch("/api/getThinkingFeedback", {
@@ -10,9 +9,9 @@ export async function getThinkingFeedback(formData) {
     if (!res.ok) throw new Error("서버 응답 오류");
 
     const { feedback } = await res.json();
-    return feedback;
+    return feedback; // 단순 텍스트
   } catch (error) {
     console.error("❌ getThinkingFeedback Error:", error);
-    return { summary: "AI 분석 실패", error: error.message };
+    return "AI 피드백 생성 중 오류가 발생했습니다.";
   }
 }
