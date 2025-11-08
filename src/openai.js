@@ -1,5 +1,3 @@
-// src/openai.js
-
 // 🧠 사고력 피드백 생성 함수
 export async function getThinkingFeedback(formData) {
   if (!import.meta.env.VITE_OPENAI_API_KEY) {
