@@ -1,102 +1,197 @@
-.thinking-form {
-  max-width: 700px;
-  margin: auto;
-  padding: 25px;
-  border-radius: var(--border-radius);
-  background: var(--card-bg);
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-  transition: var(--transition);
+/* 🎨 기본 색상 변수 */
+:root {
+  --bg-light: #f9fafb;
+  --bg-dark: #1f2937;
+  --text-light: #111827;
+  --text-dark: #f9fafb;
+  --accent: #2563eb;
+  --accent-soft: #93c5fd;
+  --card-bg: #ffffff;
+  --card-dark: #374151;
+  --border-radius: 10px;
+  --transition: 0.3s ease;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.thinking-form h2 {
+[data-theme="dark"] {
+  --bg-light: #111827;
+  --card-bg: #1f2937;
+  --text-light: #f9fafb;
+}
+
+/* 🧠 폼 전체 */
+.thinking-form {
+  max-width: 800px;
+  margin: 30px auto;
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  padding: 30px;
+  transition: background var(--transition), color var(--transition);
+}
+
+/* 메인 제목 */
+.thinking-title-main {
   text-align: center;
+  color: var(--accent);
+  font-size: 1.8rem;
+  margin-bottom: 25px;
+}
+
+/* 섹션 제목 */
+.thinking-section {
+  margin-bottom: 35px;
+  border-top: 2px solid var(--accent-soft);
+  padding-top: 20px;
+}
+
+.thinking-title {
+  color: var(--accent);
+  font-size: 1.3rem;
+  margin-bottom: 10px;
+}
+
+.thinking-subtitle {
+  font-size: 1rem;
+  color: var(--text-light);
+  margin-top: 15px;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+/* 입력 및 텍스트영역 */
+.thinking-input,
+.thinking-textarea {
+  width: 100%;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 15px;
+  font-size: 0.95rem;
+  font-family: "Pretendard", "Noto Sans KR", sans-serif;
+  color: var(--text-light);
+  background-color: var(--bg-light);
+  transition: border var(--transition), box-shadow var(--transition);
+}
+
+.thinking-textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.thinking-input:focus,
+.thinking-textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+  outline: none;
+}
+
+/* 라디오 버튼 그룹 */
+.thinking-radio-group {
+  margin: 10px 0 15px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* 체크박스 그룹 */
+.thinking-checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
   margin-bottom: 20px;
 }
 
-.form-row {
-  margin-bottom: 16px;
+.thinking-checkbox-item {
   display: flex;
-  flex-direction: column;
-}
-
-.form-row label {
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-
-.form-row input,
-.form-row textarea {
-  padding: 10px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  resize: vertical;
-  background: var(--bg-light);
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
   color: var(--text-light);
-  transition: var(--transition);
 }
 
+.thinking-checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+}
+
+/* 선택 버튼 (문학/비문학, 이해/시간/적용, 세부유형) */
 .choice-grid {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  color :#ffffff;
-}
-
-
-.submit-btn {
-  width: 100%;
-  padding: 14px;
-  border: none;
-  border-radius: var(--border-radius);
-  background: var(--accent);
-  color: rgb(37, 55, 192);
-  font-weight: 600;
-  cursor: pointer;
-  transition: var(--transition);
-}
-
-.submit-btn:hover {
-  background: #1d4ed8;
-}
-/* === 선택 버튼 그리드 === */
-.choice-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin: 10px 0;
+  margin-bottom: 15px;
 }
 
 .choice-btn {
-  background: var(--card-bg);
-  color: var(--text-light); /* ✅ 라이트 모드에서는 검정 글씨 */
-  border: 2px solid var(--accent);
-  border-radius: var(--radius);
+  border: 1.5px solid var(--accent);
+  background: transparent;
+  color: var(--accent);
+  border-radius: 8px;
   padding: 8px 14px;
+  font-size: 0.95rem;
   cursor: pointer;
-  font-weight: 600;
   transition: var(--transition);
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  font-weight: 600;
 }
 
 .choice-btn:hover {
-  background: var(--accent);
+  background: var(--accent-soft);
   color: white;
 }
 
 .choice-btn.selected {
   background: var(--accent);
   color: white;
-  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 0 10px rgba(37, 99, 235, 0.4);
 }
 
-/* === 다크모드 대응 === */
-[data-theme="dark"] .choice-btn {
-  background: var(--card-dark);
+/* 제출 버튼 */
+.submit-btn {
+  width: 100%;
+  padding: 14px 0;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background var(--transition), transform var(--transition);
+}
+
+.submit-btn:hover {
+  background: #1d4ed8;
+  transform: translateY(-2px);
+}
+
+.submit-btn:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* 다크모드 전용 조정 */
+[data-theme="dark"] .thinking-form {
+  background: var(--card-bg);
+  color: var(--text-dark);
+}
+
+[data-theme="dark"] .thinking-input,
+[data-theme="dark"] .thinking-textarea {
+  background: #1f2937;
+  border: 1.5px solid #4b5563;
   color: #f9fafb;
-  border: 2px solid var(--accent);
+}
+
+[data-theme="dark"] .choice-btn {
+  border: 1.5px solid #60a5fa;
+  color: #93c5fd;
 }
 
 [data-theme="dark"] .choice-btn.selected {
-  background: var(--accent);
-  color: white;
+  background: #2563eb;
+  color: #fff;
 }
