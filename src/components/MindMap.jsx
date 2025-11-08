@@ -1,128 +1,89 @@
-import React, { useCallback } from "react";
-import ReactFlow, {
-  MiniMap,
-  Controls,
-  Background,
-  Handle,
-  Position,
-} from "reactflow";
+// src/components/MindMap.jsx
+import { useEffect, useState } from "react";
+import ReactFlow, { MiniMap, Controls, Background } from "reactflow";
 import "reactflow/dist/style.css";
 
-export default function MindMap({ feedback }) {
-  if (!feedback || typeof feedback !== "object") {
-    return <p className="mindmap-empty">시각화할 데이터가 없습니다 😢</p>;
-  }
+export default function MindMap({ aiFeedback }) {
+  const [nodes, setNodes] = useState([]);
+  const [edges, setEdges] = useState([]);
 
-  // 🔹 JSON 구조에서 주요 섹션 추출
-  const { meta, 평가, "다음_행동(당장_실행_1~3개)": nextActions } = feedback;
+  useEffect(() => {
+    if (!aiFeedback || typeof aiFeedback !== "object") return;
 
-  // 🔹 노드 ID 자동 생성용
-  const makeId = (prefix, index) => `${prefix}-${index}`;
+    const newNodes = [];
+    const newEdges = [];
+    let yOffset = 0;
 
-  // 🔹 루트 노드
-  const nodes = [
-    {
+    // === 루트 노드 ===
+    newNodes.push({
       id: "root",
-      type: "default",
-      position: { x: 250, y: 0 },
-      data: {
-        label: `🧠 사고 피드백 요약\n\n${meta?.요약 || "요약 없음"}`,
-      },
+      position: { x: 300, y: 0 },
+      data: { label: "🧠 사고 피드백 구조" },
       style: {
-        background: "#1e3a8a",
-        color: "#fff",
+        background: "#2563eb",
+        color: "white",
         padding: 10,
-        borderRadius: 10,
-        width: 300,
-        textAlign: "center",
-        whiteSpace: "pre-line",
+        borderRadius: 8,
+        fontWeight: 600,
       },
-    },
-  ];
+    });
 
-  const edges = [];
-
-  // 🔹 주요 평가 항목을 노드화
-  if (평가 && typeof 평가 === "object") {
-    let y = 150;
-    Object.entries(평가).forEach(([key, value], i) => {
-      const nodeId = makeId("eval", i);
-      nodes.push({
+    // === 주요 평가 항목들 ===
+    Object.entries(aiFeedback.평가 || {}).forEach(([key, value], i) => {
+      const nodeId = `node-${i}`;
+      newNodes.push({
         id: nodeId,
-        type: "default",
-        position: { x: 100 * (i % 4), y },
-        data: {
-          label: `📘 ${key}\n${value.평가 || ""}`,
-        },
+        position: { x: 100 + i * 200, y: 150 },
+        data: { label: `📍 ${key}` },
         style: {
-          background: "#f8fafc",
+          background: "#e0f2fe",
           border: "1px solid #93c5fd",
           borderRadius: 8,
           padding: 8,
-          width: 220,
-          whiteSpace: "pre-line",
         },
       });
-      edges.push({
-        id: `e-root-${nodeId}`,
-        source: "root",
-        target: nodeId,
-        animated: true,
-      });
-      y += 120;
-    });
-  }
+      newEdges.push({ id: `edge-root-${i}`, source: "root", target: nodeId });
 
-  // 🔹 다음 행동 노드
-  if (nextActions && Array.isArray(nextActions)) {
-    nextActions.forEach((action, i) => {
-      const nodeId = makeId("next", i);
-      nodes.push({
-        id: nodeId,
-        type: "default",
-        position: { x: 400, y: 180 + i * 100 },
-        data: { label: `🚀 ${action}` },
-        style: {
-          background: "#dcfce7",
-          border: "1px solid #22c55e",
-          borderRadius: 8,
-          padding: 8,
-          width: 200,
-        },
-      });
-      edges.push({
-        id: `e-root-${nodeId}`,
-        source: "root",
-        target: nodeId,
-        animated: true,
-        style: { stroke: "#22c55e" },
-      });
+      // === 세부 내용 노드 (예: 질문, 평가, 개선제안 등) ===
+      if (typeof value === "object") {
+        Object.entries(value).forEach(([subKey, subVal], j) => {
+          const subId = `${nodeId}-${j}`;
+          newNodes.push({
+            id: subId,
+            position: { x: 50 + i * 200, y: 300 + j * 100 },
+            data: {
+              label: `${subKey}: ${
+                typeof subVal === "string" ? subVal.slice(0, 40) + "..." : ""
+              }`,
+            },
+            style: {
+              background: "#fef3c7",
+              border: "1px solid #fcd34d",
+              borderRadius: 6,
+              padding: 6,
+            },
+          });
+          newEdges.push({ id: `edge-${nodeId}-${j}`, source: nodeId, target: subId });
+        });
+      }
+      yOffset += 150;
     });
-  }
 
-  const onConnect = useCallback(
-    (params) => console.log("connect", params),
-    []
-  );
+    setNodes(newNodes);
+    setEdges(newEdges);
+  }, [aiFeedback]);
+
+  if (!aiFeedback) return <p>🤖 아직 피드백 데이터가 없습니다.</p>;
 
   return (
-    <div style={{ width: "100%", height: 500 }}>
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        fitView
-        onConnect={onConnect}
-        attributionPosition="bottom-right"
-      >
-        <MiniMap
-          nodeColor={(node) => {
-            if (node.id.startsWith("next")) return "#86efac";
-            if (node.id.startsWith("eval")) return "#93c5fd";
-            return "#818cf8";
-          }}
-        />
+    <div style={{ width: "100%", height: "700px" }}>
+      <h3 style={{ textAlign: "center", marginBottom: "1rem" }}>
+        🗺️ 사고 피드백 마인드맵
+      </h3>
+      <ReactFlow nodes={nodes} edges={edges} fitView>
+        <MiniMap />
         <Controls />
-        <Background gap={16} color="#ddd" />
+        <Background color="#aaa" gap={16} />
       </ReactFlow>
     </div>
   );

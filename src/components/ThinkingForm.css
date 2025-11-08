@@ -1,134 +1,67 @@
 .thinking-form {
+  max-width: 800px;
+  margin: 0 auto;
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.form-section {
+  margin-top: 1.2rem;
+}
+
+.form-row {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  max-width: 720px;
-  margin: 0 auto 60px;
-  font-family: "Pretendard", sans-serif;
+  margin-top: 1rem;
 }
 
-.thinking-section {
-  background: #ffffff;
-  padding: 20px 24px;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-.thinking-title {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #2563eb;
-  margin-bottom: 12px;
-}
-
-.thinking-subtitle {
-  margin-top: 16px;
-  margin-bottom: 8px;
+.form-row label {
   font-weight: 600;
-  color: #374151;
+  color: #1e3a8a;
+  margin-bottom: 0.3rem;
 }
 
-.thinking-input,
-.thinking-textarea {
-  width: 100%;
-  border: 1.5px solid #e5e7eb;
-  border-radius: 10px;
-  padding: 10px 12px;
-  font-size: 0.95rem;
-  transition: border 0.2s;
-}
-
-.thinking-textarea {
-  min-height: 80px;
-  resize: vertical;
-}
-
-.thinking-input:focus,
-.thinking-textarea:focus {
-  border-color: #2563eb;
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-}
-
-.thinking-checkbox-group {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px 16px;
-  margin-top: 8px;
-}
-
-.thinking-checkbox-item {
+.choice-grid {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.95rem;
-  color: #374151;
-  background: #f9fafb;
-  padding: 6px 10px;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 0.6rem;
+}
+
+.choice-btn {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
   border-radius: 8px;
-  transition: background 0.2s;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
-.thinking-checkbox-item:hover {
-  background: #f3f4f6;
+.choice-btn:hover {
+  background: #e0f2fe;
 }
 
-.thinking-checkbox {
-  width: 18px;
-  height: 18px;
-  accent-color: #2563eb;
+.choice-btn.selected {
+  background: #2563eb;
+  color: white;
+  border-color: #1d4ed8;
+  transform: scale(1.05);
 }
 
-.thinking-radio-group label {
-  margin-right: 10px;
-}
-
-.thinking-submit-btn {
-  background: linear-gradient(90deg, #2563eb, #3b82f6);
+.submit-btn {
+  margin-top: 1.5rem;
+  background: #2563eb;
   color: white;
   border: none;
+  padding: 0.8rem 1.2rem;
   border-radius: 10px;
-  padding: 14px;
-  font-weight: 600;
   cursor: pointer;
-  transition: transform 0.2s;
-}
-
-.thinking-submit-btn:hover {
-  transform: translateY(-2px);
-}
-/* 안내문 스타일 */
-.thinking-guide {
-  background: var(--card-bg);
-  color: var(--text);
-  border-left: 6px solid #2563eb;
-  padding: 24px 28px;
-  border-radius: 16px;
-  margin-bottom: 30px;
-  line-height: 1.6;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-}
-
-.thinking-guide-title {
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: #2563eb;
-  margin-bottom: 10px;
-}
-
-.thinking-guide ul,
-.thinking-guide ol {
-  margin-left: 20px;
-  margin-top: 8px;
-}
-
-.thinking-guide li {
-  margin-bottom: 6px;
-  font-size: 0.95rem;
-}
-
-.thinking-guide h3 {
+  transition: background 0.25s;
   font-weight: 600;
-  margin-top: 12px;
-  color: #1e40af;
+}
+
+.submit-btn:hover {
+  background: #1e40af;
 }

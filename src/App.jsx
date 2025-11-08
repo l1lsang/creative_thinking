@@ -3,7 +3,7 @@ import Login from "./components/Login.jsx";
 import Register from "./components/Register.jsx";
 import ThinkingForm from "./components/ThinkingForm.jsx";
 import FeedbackDisplay from "./components/FeedbackDisplay.jsx";
-import MindMap from "./components/MindMap.jsx"; // 🧠 추가: 사고 과정 마인드맵
+import MindMap from "./components/MindMap.jsx";
 import Header from "./components/Header.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
 import MyRecords from "./pages/MyRecords.jsx";
@@ -12,10 +12,10 @@ import "./App.css";
 
 export default function App() {
   const [user, setUser] = useState(null);
-  const [page, setPage] = useState("login"); // login | register | form | records
+  const [page, setPage] = useState("login"); // login | register | form | feedback | mindmap | records
   const [feedback, setFeedback] = useState(null); // ✅ AI JSON 전체
+  const [formData, setFormData] = useState(null); // ✅ 사고 기록 데이터
   const [theme, setTheme] = useState("light");
-  const [formData, setFormData] = useState(null); // ✅ 마인드맵용
 
   // ✅ 로그인 유지
   useEffect(() => {
@@ -42,11 +42,11 @@ export default function App() {
     document.documentElement.setAttribute("data-theme", newTheme);
   };
 
-  // ✅ 기록 작성 완료 시 “나의 기록”으로 자동 이동
+  // ✅ 폼 작성 완료 시 AI 피드백 저장 + 다음 페이지 이동
   const handleFormComplete = (aiResult, form) => {
-    setFeedback(aiResult); // ✅ AI JSON 구조 통째로 저장
-    setFormData(form); // ✅ 마인드맵 표시용
-    setPage("records");
+    setFeedback(aiResult); // AI JSON 저장
+    setFormData(form); // 사고 데이터 저장
+    setPage("feedback"); // ✅ 자동으로 피드백 단계로 이동
   };
 
   // ✅ 관리자 여부
@@ -54,7 +54,7 @@ export default function App() {
 
   return (
     <div className={`app-container ${theme}`}>
-      {/* 로그인 안 한 상태 */}
+      {/* 로그인 X 상태 */}
       {!user ? (
         page === "login" ? (
           <Login
@@ -75,7 +75,7 @@ export default function App() {
             theme={theme}
           />
 
-          {/* ✅ 관리자 */}
+          {/* ✅ 관리자 페이지 */}
           {isAdmin ? (
             <AdminDashboard />
           ) : (
@@ -96,19 +96,43 @@ export default function App() {
                 </button>
               </nav>
 
-              {/* ✅ 학생 페이지 분기 */}
-              {page === "form" ? (
-                <>
-                  <ThinkingForm
-                    user={user}
-                    onFeedback={(aiResult, form) => handleFormComplete(aiResult, form)}
-                  />
-                  {formData && <MindMap form={formData} />} {/* 사고 과정 시각화 */}
-                  {feedback && <FeedbackDisplay feedback={feedback} />} {/* AI JSON 피드백 표시 */}
-                </>
-              ) : (
-                <MyRecords user={user} />
+              {/* ✅ 페이지 전환 */}
+              {page === "form" && (
+                <ThinkingForm
+                  user={user}
+                  onFeedback={(aiResult, form) => handleFormComplete(aiResult, form)}
+                />
               )}
+
+              {page === "feedback" && feedback && (
+                <div className="feedback-stage">
+                  <FeedbackDisplay feedback={feedback} />
+                  <div className="nav-center">
+                    <button
+                      className="next-btn"
+                      onClick={() => setPage("mindmap")}
+                    >
+                      🧭 사고 흐름 시각화 보기
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {page === "mindmap" && feedback && (
+                <div className="mindmap-stage">
+                  <MindMap aiFeedback={feedback} />
+                  <div className="nav-center">
+                    <button
+                      className="next-btn"
+                      onClick={() => setPage("records")}
+                    >
+                      📚 나의 기록으로 이동
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {page === "records" && <MyRecords user={user} />}
             </>
           )}
         </>
