@@ -1,4 +1,3 @@
-// src/pages/MyRecords.jsx
 import { useEffect, useState } from "react";
 import { collection, query, where, orderBy, getDocs } from "firebase/firestore";
 import { db } from "../firebase.js";
@@ -19,6 +18,7 @@ export default function MyRecords({ user }) {
           where("userId", "==", user.id),
           orderBy("createdAt", "desc")
         );
+
         const snapshot = await getDocs(q);
         const data = snapshot.docs.map((doc) => ({
           id: doc.id,
@@ -41,8 +41,11 @@ export default function MyRecords({ user }) {
   return (
     <div className="myrecords-container">
       <h1 className="myrecords-title">📘 나의 사고 기록</h1>
-      <p className="myrecords-subtitle">총 {records.length}개의 기록이 있습니다.</p>
+      <p className="myrecords-subtitle">
+        총 {records.length}개의 기록이 있습니다.
+      </p>
 
+      {/* === 기록 카드 목록 === */}
       <div className="myrecords-list">
         {records.map((record) => (
           <div
@@ -51,39 +54,99 @@ export default function MyRecords({ user }) {
             onClick={() => setSelectedRecord(record)}
           >
             <h3>{record.topic || "제목 없음"}</h3>
-            <p><strong>날짜:</strong> {record.date || "-"}</p>
-            <p><strong>평가 점수:</strong> {record.evaluation || "미입력"}</p>
-            <p className="ellipsis"><strong>목표:</strong> {record.goal}</p>
+            <p>
+              <strong>날짜:</strong> {record.date || "-"}
+            </p>
+            <p>
+              <strong>평가 점수:</strong> {record.evaluation || "미입력"}
+            </p>
+            <p className="ellipsis">
+              <strong>목표:</strong> {record.goal}
+            </p>
           </div>
         ))}
       </div>
 
-      {/* ✅ 선택된 기록 상세 보기 모달 */}
+      {/* === 선택된 기록 상세 보기 === */}
       {selectedRecord && (
         <div className="record-modal">
           <div className="record-modal-content">
-            <button className="close-btn" onClick={() => setSelectedRecord(null)}>닫기 ✖</button>
-            <h2>🧠 {selectedRecord.topic || "제목 없음"}</h2>
-            <p><strong>날짜:</strong> {selectedRecord.date}</p>
-            <p><strong>문제 유형:</strong> {selectedRecord.problemType?.join(", ")}</p>
-            <p><strong>목표:</strong> {selectedRecord.goal}</p>
-            <p><strong>전략:</strong> {selectedRecord.strategy}</p>
-            <p><strong>근거:</strong> {selectedRecord.sources}</p>
-            <p><strong>분석:</strong> {selectedRecord.analysis}</p>
-            <p><strong>협력:</strong> {selectedRecord.collaboration}</p>
-            <p><strong>통찰:</strong> {selectedRecord.reflection}</p>
-            <p><strong>어려움:</strong> {selectedRecord.difficulty}</p>
-            <p><strong>감정:</strong> {selectedRecord.emotion}</p>
-            <p><strong>장기적 성찰:</strong> {selectedRecord.longTermMeaning}</p>
-            <p><strong>실행 계획:</strong> {selectedRecord.todo}</p>
-            <p><strong>기한:</strong> {selectedRecord.deadline}</p>
+            <button
+              className="close-btn"
+              onClick={() => setSelectedRecord(null)}
+            >
+              닫기 ✖
+            </button>
 
-            {/* 🔹 AI 피드백 표시 (thinkingFeedbackLogs 연결 시) */}
+            <h2>🧠 {selectedRecord.topic || "제목 없음"}</h2>
+            <p>
+              <strong>날짜:</strong> {selectedRecord.date}
+            </p>
+            <p>
+              <strong>문제 유형:</strong>{" "}
+              {selectedRecord.problemType?.join(", ")}
+            </p>
+            <p>
+              <strong>목표:</strong> {selectedRecord.goal}
+            </p>
+            <p>
+              <strong>전략:</strong> {selectedRecord.strategy}
+            </p>
+            <p>
+              <strong>근거:</strong> {selectedRecord.sources}
+            </p>
+            <p>
+              <strong>분석:</strong> {selectedRecord.analysis}
+            </p>
+            <p>
+              <strong>협력:</strong> {selectedRecord.collaboration}
+            </p>
+            <p>
+              <strong>통찰:</strong> {selectedRecord.reflection}
+            </p>
+            <p>
+              <strong>어려움:</strong> {selectedRecord.difficulty}
+            </p>
+            <p>
+              <strong>감정:</strong> {selectedRecord.emotion}
+            </p>
+            <p>
+              <strong>장기적 성찰:</strong>{" "}
+              {selectedRecord.longTermMeaning}
+            </p>
+            <p>
+              <strong>실행 계획:</strong> {selectedRecord.todo}
+            </p>
+            <p>
+              <strong>기한:</strong> {selectedRecord.deadline}
+            </p>
+
+            {/* === AI 피드백 안전 렌더링 === */}
             {selectedRecord.aiFeedback && (
               <>
                 <h3>🤖 AI 피드백</h3>
-                <pre className="ai-feedback-box">{selectedRecord.aiFeedback}</pre>
+                {typeof selectedRecord.aiFeedback === "object" ? (
+                  <pre className="ai-feedback-box">
+                    {JSON.stringify(selectedRecord.aiFeedback, null, 2)}
+                  </pre>
+                ) : (
+                  <pre className="ai-feedback-box">
+                    {String(selectedRecord.aiFeedback)}
+                  </pre>
+                )}
               </>
+            )}
+
+            {/* === 점수 (optional) === */}
+            {(selectedRecord.logicScore ||
+              selectedRecord.criticalScore ||
+              selectedRecord.improvementScore) && (
+              <div className="score-section">
+                <h3>📊 AI 분석 점수</h3>
+                <p>논리적 사고력: {selectedRecord.logicScore || "-"}점</p>
+                <p>비판적 사고력: {selectedRecord.criticalScore || "-"}점</p>
+                <p>개선 제안 점수: {selectedRecord.improvementScore || "-"}점</p>
+              </div>
             )}
           </div>
         </div>
