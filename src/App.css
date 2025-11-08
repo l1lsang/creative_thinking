@@ -2,7 +2,7 @@
   --bg-light: #f9fafb;
   --bg-dark: #1f2937;
   --text-light: #111827;
-  --text-dark: #090909;
+  --text-dark: #f9fafb;
   --accent: #2563eb;
   --accent-hover: #1d4ed8;
   --card-bg: #ffffff;
@@ -29,13 +29,12 @@ body, html {
   transition: background var(--transition), color var(--transition);
 }
 
-/* ===== 앱 컨테이너 ===== */
 .app-container {
   min-height: 100vh;
   padding: 20px;
 }
 
-/* ===== 상단 헤더 ===== */
+/* ================= HEADER ================= */
 .header {
   display: flex;
   justify-content: space-between;
@@ -59,7 +58,6 @@ body, html {
   gap: 10px;
 }
 
-/* 로그아웃 & 테마 버튼 */
 .header button {
   border: none;
   background: var(--accent);
@@ -83,7 +81,6 @@ body, html {
   border: 2px solid var(--accent);
   padding: 7px 12px;
   font-size: 0.9rem;
-  transition: var(--transition);
 }
 
 .header .theme-toggle:hover {
@@ -91,7 +88,7 @@ body, html {
   color: white;
 }
 
-/* ===== 네비게이션 ===== */
+/* ================= NAVIGATION ================= */
 .student-nav {
   display: flex;
   justify-content: center;
@@ -118,7 +115,69 @@ body, html {
   color: white;
 }
 
-/* ===== 카드 기본 스타일 ===== */
+/* ================= BUTTONS ================= */
+button {
+  border: none;
+  border-radius: var(--radius);
+  padding: 10px 16px;
+  background: var(--accent);
+  color: var(--text-dark); /* ✅ 기본 상태에서는 짙은 글씨 */
+  cursor: pointer;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+button:hover {
+  background: var(--accent-hover);
+  color: white;
+}
+
+/* 다크모드용 버튼 */
+[data-theme="dark"] button {
+  color: white;
+  background: var(--accent);
+}
+
+[data-theme="dark"] button:hover {
+  background: var(--accent-hover);
+  color: white;
+}
+
+/* ================= INPUT / TEXTAREA ================= */
+input, textarea {
+  border-radius: var(--radius);
+  border: 1px solid #d1d5db;
+  padding: 10px;
+  width: 100%;
+  background: var(--card-bg);
+  color: var(--text-light);
+  transition: var(--transition);
+}
+
+[data-theme="dark"] input,
+[data-theme="dark"] textarea {
+  background: var(--card-dark);
+  color: var(--text-dark);
+  border: 1px solid #4b5563;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #9ca3af;
+}
+
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder {
+  color: #d1d5db;
+}
+
+input:focus, textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+/* ================= CARD ================= */
 .card {
   background: var(--card-bg);
   border-radius: var(--radius);
@@ -132,64 +191,79 @@ body, html {
   box-shadow: 0 6px 20px rgba(0,0,0,0.15);
 }
 
-/* ===== 폼 버튼 & 인풋 ===== */
-button, input, textarea {
-  font-family: inherit;
-}
-
-/* ===== 인풋 & 텍스트에어리어 ===== */
-input, textarea {
+/* ================= LOGIN / REGISTER FORM ================= */
+.login-container, .register-container {
+  max-width: 420px;
+  margin: 60px auto;
+  padding: 30px;
   border-radius: var(--radius);
-  border: 1px solid #d1d5db;
-  padding: 10px;
-  width: 100%;
   background: var(--card-bg);
-  color: var(--text-light); /* ✅ 글씨색 추가 */
-  transition: var(--transition);
+  box-shadow: var(--shadow);
+  text-align: center;
 }
 
-/* 다크모드 전용 input 스타일 */
-[data-theme="dark"] input,
-[data-theme="dark"] textarea {
-  background: var(--card-dark);
-  color: var(--text-dark); /* ✅ 흰색 글씨로 변경 */
-  border: 1px solid #4b5563; /* 살짝 어두운 테두리 */
+.login-title, .register-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 20px;
 }
 
-input::placeholder,
-textarea::placeholder {
-  color: #9ca3af; /* ✅ 회색 톤 placeholder */
+.login-form, .register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
-[data-theme="dark"] input::placeholder,
-[data-theme="dark"] textarea::placeholder {
-  color: #d1d5db; /* ✅ 다크모드에서도 잘 보이게 */
-}
-
-/* 포커스 효과 */
-input:focus, textarea:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
-}
-
-
-button {
-  border: none;
+.login-input, .register-input {
+  padding: 10px;
+  font-size: 1rem;
   border-radius: var(--radius);
-  padding: 10px 16px;
+  border: 1px solid #ccc;
+  background: var(--card-bg);
+  color: var(--text-light);
+}
+
+[data-theme="dark"] .login-input,
+[data-theme="dark"] .register-input {
+  background: var(--card-dark);
+  color: var(--text-dark);
+  border: 1px solid #4b5563;
+}
+
+.login-btn, .register-btn {
   background: var(--accent);
   color: white;
+  border: none;
+  padding: 10px;
+  border-radius: var(--radius);
   cursor: pointer;
-  font-weight: 600;
   transition: var(--transition);
+  font-weight: 600;
 }
 
-button:hover {
+.login-btn:hover, .register-btn:hover {
   background: var(--accent-hover);
 }
 
-/* ===== 반응형 대응 ===== */
+.login-switch, .register-switch {
+  margin-top: 10px;
+  color: var(--text-light);
+}
+
+.login-switch button, .register-switch button {
+  background: none;
+  color: var(--accent);
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.login-switch button:hover, .register-switch button:hover {
+  text-decoration: underline;
+}
+
+/* ================= RESPONSIVE ================= */
 @media (max-width: 768px) {
   .header {
     flex-direction: column;
