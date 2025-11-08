@@ -12,6 +12,7 @@
   "dependencies": {
     "firebase": "^12.5.0",
     "json5": "^2.2.3",
+    "openai": "^6.8.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "reactflow": "^11.11.4",
