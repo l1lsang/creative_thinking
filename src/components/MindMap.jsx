@@ -1,96 +1,81 @@
-import { Treemap, Tooltip, ResponsiveContainer } from "recharts";
+import React, { useMemo } from "react";
+import ReactFlow, { MiniMap, Controls, Background } from "reactflow";
+import "reactflow/dist/style.css";
 import "./MindMap.css";
 
-export default function MindMap({ form }) {
-  if (!form) return null;
+export default function MindMap({ feedback }) {
+  if (!feedback || typeof feedback !== "object") {
+    return <p>시각화할 피드백이 없습니다 🪄</p>;
+  }
 
-  // 🧠 form 데이터를 트리 구조로 변환
-  const data = [
-    {
-      name: "목표 🎯",
-      children: [
-        {
-          name: "사전사고 💡",
-          children: [
-            { name: `선행 지식: ${form.priorKnowledge || "없음"}` },
-            { name: `예상 어려움: ${form.difficulty || "없음"}` },
-          ],
-        },
-        {
-          name: "사고과정 🔍",
-          children: [
-            { name: `전략: ${form.strategy || "없음"}` },
-            { name: `분석: ${form.analysis || "없음"}` },
-            { name: `협력: ${form.collaboration || "없음"}` },
-          ],
-        },
-        {
-          name: "사고 후 반성 🪞",
-          children: [
-            { name: `통찰: ${form.reflection || "없음"}` },
-            {
-              name: "비판적 사고 체크",
-              children: Object.entries(form.criticalThinking || {}).map(
-                ([key, value]) => ({
-                  name: `${key}: ${value ? "✅" : "❌"}`,
-                })
-              ),
-            },
-          ],
-        },
-        {
-          name: "실행계획 🗓️",
-          children: [
-            { name: `해야 할 일: ${form.todo || "없음"}` },
-            { name: `기한: ${form.deadline || "없음"}` },
-          ],
-        },
-      ],
-    },
-  ];
+  const nodes = useMemo(() => {
+    const list = [];
+
+    // 중심 노드
+    list.push({
+      id: "root",
+      data: { label: "🧠 사고 피드백 흐름" },
+      position: { x: 0, y: 0 },
+      style: { background: "#2563eb", color: "#fff", borderRadius: 8, padding: 10 },
+    });
+
+    // 주요 평가 항목 노드
+    if (feedback.평가) {
+      Object.entries(feedback.평가).forEach(([key, val], idx) => {
+        list.push({
+          id: `node-${idx}`,
+          data: { label: `${key.replaceAll("_", " ")}\n${val.평가 || ""}` },
+          position: { x: 100 * Math.cos(idx * 0.6), y: 100 * Math.sin(idx * 0.6) + 100 },
+          style: {
+            background: "#f0f9ff",
+            border: "2px solid #3b82f6",
+            borderRadius: 10,
+            padding: 8,
+            whiteSpace: "pre-wrap",
+            width: 200,
+          },
+        });
+      });
+    }
+
+    // 다음 행동 노드
+    if (Array.isArray(feedback["다음_행동(당장_실행_1~3개)"])) {
+      feedback["다음_행동(당장_실행_1~3개)"].forEach((step, i) => {
+        list.push({
+          id: `action-${i}`,
+          data: { label: `🚀 ${step}` },
+          position: { x: i * 160 - 160, y: 320 },
+          style: {
+            background: "#dcfce7",
+            border: "2px solid #16a34a",
+            borderRadius: 8,
+            padding: 6,
+            fontSize: 13,
+          },
+        });
+      });
+    }
+
+    return list;
+  }, [feedback]);
+
+  const edges = useMemo(() => {
+    const base = [];
+    nodes.forEach((node) => {
+      if (node.id !== "root") {
+        base.push({ id: `e-root-${node.id}`, source: "root", target: node.id, animated: true });
+      }
+    });
+    return base;
+  }, [nodes]);
 
   return (
-    <div className="mindmap-container">
-      <h3 className="mindmap-title">🧭 사고 과정 마인드맵</h3>
-      <ResponsiveContainer width="100%" height={400}>
-        <Treemap
-          data={data}
-          dataKey="size"
-          ratio={4 / 3}
-          stroke="#fff"
-          fill="#60a5fa"
-          content={<CustomNode />}
-        >
-          <Tooltip />
-        </Treemap>
-      </ResponsiveContainer>
+    <div className="mindmap-container" style={{ width: "100%", height: "500px" }}>
+      <ReactFlow nodes={nodes} edges={edges} fitView>
+        <MiniMap />
+        <Controls />
+        <Background gap={12} color="#eee" />
+      </ReactFlow>
     </div>
-  );
-}
-
-// 🧩 커스텀 노드 렌더링
-function CustomNode({ name, x, y, width, height }) {
-  return (
-    <g>
-      <rect
-        x={x}
-        y={y}
-        width={width}
-        height={height}
-        fill="#3b82f6"
-        stroke="#fff"
-        strokeWidth={2}
-        rx={8}
-      />
-      <text
-        x={x + 8}
-        y={y + 20}
-        fill="#fff"
-        fontSize={12}
-        style={{ pointerEvents: "none" }}
-      >
-        {name.length > 40 ? name.slice(0, 40) + "..." : name}
-      </text>
-    </g>
   );
 }

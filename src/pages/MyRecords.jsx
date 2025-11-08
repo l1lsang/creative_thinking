@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { collection, query, where, orderBy, getDocs } from "firebase/firestore";
 import { db } from "../firebase.js";
+import MindMap from "../components/MindMap.jsx";
 import "./MyRecords.css";
 
 export default function MyRecords({ user }) {
@@ -121,14 +122,22 @@ export default function MyRecords({ user }) {
               <strong>기한:</strong> {selectedRecord.deadline}
             </p>
 
-            {/* === AI 피드백 안전 렌더링 === */}
+            {/* === AI 피드백 렌더링 === */}
             {selectedRecord.aiFeedback && (
               <>
                 <h3>🤖 AI 피드백</h3>
+
                 {typeof selectedRecord.aiFeedback === "object" ? (
-                  <pre className="ai-feedback-box">
-                    {JSON.stringify(selectedRecord.aiFeedback, null, 2)}
-                  </pre>
+                  <>
+                    {/* JSON 보기 */}
+                    <pre className="ai-feedback-box">
+                      {JSON.stringify(selectedRecord.aiFeedback, null, 2)}
+                    </pre>
+
+                    {/* 🧭 사고의 흐름 시각화 */}
+                    <h3>🗺 사고 흐름 시각화</h3>
+                    <MindMap feedback={selectedRecord.aiFeedback} />
+                  </>
                 ) : (
                   <pre className="ai-feedback-box">
                     {String(selectedRecord.aiFeedback)}

@@ -14,3 +14,11 @@
   text-align: center;
   margin-bottom: 20px;
 }
+
+.mindmap-container {
+  border: 2px solid #dbeafe;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  background: white;
+  margin-top: 20px;
+}
