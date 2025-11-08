@@ -3,6 +3,7 @@ import Login from "./components/Login.jsx";
 import Register from "./components/Register.jsx";
 import ThinkingForm from "./components/ThinkingForm.jsx";
 import FeedbackDisplay from "./components/FeedbackDisplay.jsx";
+import MindMap from "./components/MindMap.jsx"; // 🧠 추가: 사고 과정 마인드맵
 import Header from "./components/Header.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
 import MyRecords from "./pages/MyRecords.jsx";
@@ -12,11 +13,11 @@ import "./App.css";
 export default function App() {
   const [user, setUser] = useState(null);
   const [page, setPage] = useState("login"); // login | register | form | records
-  const [feedback, setFeedback] = useState("");
-  const [scores, setScores] = useState(null); // ✅ 새로 추가 (AI 점수)
+  const [feedback, setFeedback] = useState(null); // ✅ AI JSON 전체
   const [theme, setTheme] = useState("light");
+  const [formData, setFormData] = useState(null); // ✅ 마인드맵용
 
-  // ✅ 로그인 유지 (새로고침 시)
+  // ✅ 로그인 유지
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
     if (savedUser) {
@@ -29,8 +30,8 @@ export default function App() {
   const handleLogout = () => {
     setUser(null);
     setPage("login");
-    setFeedback("");
-    setScores(null);
+    setFeedback(null);
+    setFormData(null);
     localStorage.removeItem("user");
   };
 
@@ -41,15 +42,11 @@ export default function App() {
     document.documentElement.setAttribute("data-theme", newTheme);
   };
 
-  // ✅ 기록 작성 완료 시 “나의 기록”으로 자동 이동 + 점수 저장
-  const handleFormComplete = (aiResult) => {
-    setFeedback(aiResult.feedback);
-    setScores({
-      logicScore: aiResult.logicScore,
-      criticalScore: aiResult.criticalScore,
-      improvementScore: aiResult.improvementScore,
-    });
-    setPage("records"); // ✅ 자동 이동
+  // ✅ 기록 작성 완료 시 “나의 기록”으로 자동 이동
+  const handleFormComplete = (aiResult, form) => {
+    setFeedback(aiResult); // ✅ AI JSON 구조 통째로 저장
+    setFormData(form); // ✅ 마인드맵 표시용
+    setPage("records");
   };
 
   // ✅ 관리자 여부
@@ -78,7 +75,7 @@ export default function App() {
             theme={theme}
           />
 
-          {/* ✅ 관리자 페이지 */}
+          {/* ✅ 관리자 */}
           {isAdmin ? (
             <AdminDashboard />
           ) : (
@@ -102,8 +99,12 @@ export default function App() {
               {/* ✅ 학생 페이지 분기 */}
               {page === "form" ? (
                 <>
-                  <ThinkingForm user={user} onFeedback={handleFormComplete} />
-                  <FeedbackDisplay feedback={feedback} scores={scores} />
+                  <ThinkingForm
+                    user={user}
+                    onFeedback={(aiResult, form) => handleFormComplete(aiResult, form)}
+                  />
+                  {formData && <MindMap form={formData} />} {/* 사고 과정 시각화 */}
+                  {feedback && <FeedbackDisplay feedback={feedback} />} {/* AI JSON 피드백 표시 */}
                 </>
               ) : (
                 <MyRecords user={user} />

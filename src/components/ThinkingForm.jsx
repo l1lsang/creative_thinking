@@ -66,16 +66,24 @@ export default function ThinkingForm({ user, onFeedback }) {
       const aiResult = await getThinkingFeedback(form);
 
       // 2️⃣ Firestore에 저장 (AI 피드백 + 점수)
-      await addDoc(collection(db, "thinkingRecords"), {
-        userId: user.id,
-        email: user.email,
-        ...form,
-        createdAt: serverTimestamp(),
-        aiFeedback: aiResult.feedback,
-        logicScore: aiResult.logicScore,
-        criticalScore: aiResult.criticalScore,
-        improvementScore: aiResult.improvementScore,
-      });
+   await addDoc(collection(db, "thinkingRecords"), {
+  userId: user.id,
+  email: user.email,
+  ...form,
+  createdAt: serverTimestamp(),
+  
+  // 🧠 AI 분석 결과 전체 저장
+  aiFeedback: {
+    meta: aiResult.meta,
+    평가: aiResult.평가,
+    다음_행동: aiResult["다음_행동(당장_실행_1~3개)"] || [],
+  },
+
+  // 🔹 요약 필드는 바로 접근할 수 있게 따로 복제 저장 (검색·리스트용)
+  aiSummary: aiResult.meta?.요약 || "",
+  aiTone: aiResult.meta?.톤 || "따뜻한_코치",
+  totalQuestions: aiResult.meta?.총_질문_개수 || 0,
+});
 
       // 3️⃣ 상위 컴포넌트(App)로 결과 전달 + 자동 이동
       onFeedback(aiResult);
