@@ -13,6 +13,7 @@ export default function App() {
   const [user, setUser] = useState(null);
   const [page, setPage] = useState("login"); // login | register | form | records
   const [feedback, setFeedback] = useState("");
+  const [scores, setScores] = useState(null); // ✅ 새로 추가 (AI 점수)
   const [theme, setTheme] = useState("light");
 
   // ✅ 로그인 유지 (새로고침 시)
@@ -29,6 +30,7 @@ export default function App() {
     setUser(null);
     setPage("login");
     setFeedback("");
+    setScores(null);
     localStorage.removeItem("user");
   };
 
@@ -39,14 +41,14 @@ export default function App() {
     document.documentElement.setAttribute("data-theme", newTheme);
   };
 
-  // ✅ AI 피드백 업데이트
-  const handleFeedback = (aiFeedback) => {
-    setFeedback(aiFeedback);
-  };
-
-  // ✅ 기록 작성 완료 시 “나의 기록”으로 자동 전환
-  const handleFormComplete = (aiFeedback) => {
-    setFeedback(aiFeedback);
+  // ✅ 기록 작성 완료 시 “나의 기록”으로 자동 이동 + 점수 저장
+  const handleFormComplete = (aiResult) => {
+    setFeedback(aiResult.feedback);
+    setScores({
+      logicScore: aiResult.logicScore,
+      criticalScore: aiResult.criticalScore,
+      improvementScore: aiResult.improvementScore,
+    });
     setPage("records"); // ✅ 자동 이동
   };
 
@@ -76,7 +78,7 @@ export default function App() {
             theme={theme}
           />
 
-          {/* ✅ 관리자 */}
+          {/* ✅ 관리자 페이지 */}
           {isAdmin ? (
             <AdminDashboard />
           ) : (
@@ -101,7 +103,7 @@ export default function App() {
               {page === "form" ? (
                 <>
                   <ThinkingForm user={user} onFeedback={handleFormComplete} />
-                  <FeedbackDisplay feedback={feedback} />
+                  <FeedbackDisplay feedback={feedback} scores={scores} />
                 </>
               ) : (
                 <MyRecords user={user} />
