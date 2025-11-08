@@ -9,7 +9,7 @@ export default function MyRecords({ user }) {
   const [loading, setLoading] = useState(true);
   const [selectedRecord, setSelectedRecord] = useState(null);
 
-  // 🔹 사용자별 기록 불러오기
+  // 🔹 Firestore에서 나의 기록 불러오기
   useEffect(() => {
     if (!user?.id) return;
 
@@ -43,9 +43,7 @@ export default function MyRecords({ user }) {
   return (
     <div className="myrecords-container">
       <h1 className="myrecords-title">📘 나의 사고 기록</h1>
-      <p className="myrecords-subtitle">
-        총 {records.length}개의 기록이 있습니다.
-      </p>
+      <p className="myrecords-subtitle">총 {records.length}개의 기록이 있습니다.</p>
 
       {/* === 기록 카드 목록 === */}
       <div className="myrecords-list">
@@ -56,29 +54,18 @@ export default function MyRecords({ user }) {
             onClick={() => setSelectedRecord(record)}
           >
             <h3>{record.topic || "제목 없음"}</h3>
-            <p>
-              <strong>날짜:</strong> {record.date || "-"}
-            </p>
-            <p>
-              <strong>평가 점수:</strong> {record.evaluation || "미입력"}
-            </p>
-            <p className="ellipsis">
-              <strong>목표:</strong> {record.goal}
-            </p>
+            <p><strong>날짜:</strong> {record.date || "-"}</p>
+            <p><strong>평가 점수:</strong> {record.evaluation || "미입력"}</p>
+            <p className="ellipsis"><strong>목표:</strong> {record.goal}</p>
           </div>
         ))}
       </div>
 
-      {/* === 상세 보기 모달 === */}
+      {/* === 상세 모달 === */}
       {selectedRecord && (
         <div className="record-modal">
           <div className="record-modal-content">
-            <button
-              className="close-btn"
-              onClick={() => setSelectedRecord(null)}
-            >
-              닫기 ✖
-            </button>
+            <button className="close-btn" onClick={() => setSelectedRecord(null)}>닫기 ✖</button>
 
             <h2>🧠 {selectedRecord.topic || "제목 없음"}</h2>
             <p><strong>날짜:</strong> {selectedRecord.date}</p>
@@ -101,13 +88,18 @@ export default function MyRecords({ user }) {
                 <h3>🤖 AI 피드백</h3>
                 {(() => {
                   try {
-                    // 문자열이면 JSON 파싱 시도
-                    const parsed =
-                      typeof selectedRecord.aiFeedback === "string"
-                        ? JSON.parse(selectedRecord.aiFeedback)
-                        : selectedRecord.aiFeedback;
+                    let parsed = selectedRecord.aiFeedback;
 
-                    // 객체면 JSON + 마인드맵 함께 표시
+                    // 문자열이면 JSON 파싱 시도
+                    if (typeof parsed === "string") {
+                      try {
+                        parsed = JSON.parse(parsed);
+                      } catch {
+                        // 파싱 실패 → 그대로 유지
+                      }
+                    }
+
+                    // 객체면 문자열로 변환하여 표시
                     if (parsed && typeof parsed === "object") {
                       return (
                         <>
@@ -115,20 +107,21 @@ export default function MyRecords({ user }) {
                             {JSON.stringify(parsed, null, 2)}
                           </pre>
 
+                          {/* 사고 흐름 시각화 */}
                           <h3>🗺 사고 흐름 시각화</h3>
                           <MindMap feedback={parsed} />
                         </>
                       );
                     }
 
-                    // 문자열일 경우
+                    // 문자열 그대로 출력
                     return (
                       <pre className="ai-feedback-box">
-                        {String(selectedRecord.aiFeedback)}
+                        {String(parsed)}
                       </pre>
                     );
                   } catch (err) {
-                    console.warn("⚠️ aiFeedback 파싱 실패:", err);
+                    console.error("⚠️ aiFeedback 렌더링 오류:", err);
                     return (
                       <pre className="ai-feedback-box">
                         {String(selectedRecord.aiFeedback)}
@@ -139,7 +132,7 @@ export default function MyRecords({ user }) {
               </>
             )}
 
-            {/* === AI 점수 === */}
+            {/* === AI 분석 점수 === */}
             {(selectedRecord.logicScore ||
               selectedRecord.criticalScore ||
               selectedRecord.improvementScore) && (
