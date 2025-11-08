@@ -61,22 +61,48 @@ export default function ThinkingForm({ user, onFeedback }) {
     e.preventDefault();
     setLoading(true);
 
+    console.log("🧩 [Debug] user 객체:", user);
+    console.log("🧩 [Debug] 제출 데이터:", form);
+
+    if (!user || !user.id) {
+      alert("로그인 정보가 없습니다. 다시 로그인해주세요 ⚠️");
+      setLoading(false);
+      return;
+    }
+
     try {
-      // Firestore에 저장
-      await addDoc(collection(db, "thinkingRecords"), {
+      // ✅ Firestore에 저장
+      const docRef = await addDoc(collection(db, "thinkingRecords"), {
         userId: user.id,
-        email: user.email,
+        email: user.email || "",
         ...form,
         createdAt: serverTimestamp(),
       });
 
-      // OpenAI 피드백 요청
-      const feedback = await getThinkingFeedback(form);
-      onFeedback(feedback);
+      console.log("✅ Firestore 저장 성공! 문서 ID:", docRef.id);
+
+      // ✅ OpenAI 피드백 생성
+      try {
+        const feedback = await getThinkingFeedback(form);
+
+        // Firestore에 aiFeedback 필드 업데이트
+        await addDoc(collection(db, "thinkingFeedbackLogs"), {
+          userId: user.id,
+          recordId: docRef.id,
+          feedback,
+          createdAt: serverTimestamp(),
+        });
+
+        onFeedback(feedback);
+        console.log("🤖 AI 피드백 생성 성공:", feedback);
+      } catch (aiError) {
+        console.error("🤖 AI 피드백 오류:", aiError);
+        alert("기록은 저장되었지만 AI 피드백 생성 중 오류가 발생했습니다 ⚠️");
+      }
 
       alert("기록이 성공적으로 저장되었습니다 🧠✨");
     } catch (err) {
-      console.error("저장 오류:", err);
+      console.error("🔥 Firestore 에러 상세:", err);
       alert("저장 중 오류가 발생했습니다 ❌");
     } finally {
       setLoading(false);
@@ -85,34 +111,17 @@ export default function ThinkingForm({ user, onFeedback }) {
 
   return (
     <form onSubmit={handleSubmit} className="thinking-form">
-      {/* 🧭 --- 사고 트레이닝 기록지 안내 --- */}
+      {/* --- 사고 트레이닝 안내 --- */}
       <section className="thinking-guide">
         <h2 className="thinking-guide-title">🧭 사고 트레이닝 기록지 안내</h2>
         <p>
           이 기록지는 여러분이 자유롭게 사고하고 토론하며 스스로 성장할 수 있도록 돕는 학습 도구입니다. 
-          교육의 궁극적 목표는 여러분이 가치 있고 행복한 삶을 살아가는 것입니다. 
           다음의 연구 결과는 왜 이런 기록이 중요한지를 보여줍니다.
         </p>
         <ul>
-          <li>자기조절학습(Self-Regulated Learning) 연구에서는 목표 설정, 전략 수립, 자기효능감, 도움 요청, elaboration, 반성(reflection)과 같은 하위 과정을 통해 학습자가 스스로 학습을 조절한다고 보고합니다. 반성은 학습 동기와 목표 설정을 강화하고 과정과 결과를 평가하는 핵심 요소입니다.</li>
-          <li>메타인지 프롬프트를 사용하여 ‘이 목표를 어떻게 달성할 것인가?’ ‘진행 상황을 어떻게 평가할 것인가?’와 같은 질문을 던지면 자기조절학습 능력과 학습 성과가 향상된다는 연구 결과가 있습니다.</li>
-          <li>반성적 저널과 일기 쓰기는 학생들이 경험을 글로 표현하며 학습 속도를 늦추고 자신의 경험에서 통찰을 얻도록 돕습니다. 이러한 글쓰기는 감정을 표현하고 수업과 실제 경험을 연결하며 비판적 사고를 증진합니다.</li>
-          <li>비판적 사고 평가 루브릭은 문제를 명확히 정의하고, 근거와 출처를 찾고, 아이디어를 분석하고, 반대 증거와 편견을 검토하여 논리적 결론을 도출하는 과정을 강조합니다.</li>
-        </ul>
-
-        <h3>기록지 활용 방법</h3>
-        <ol>
-          <li>사전 사고: 활동 전 목표를 설정하고 선행 지식을 정리합니다.</li>
-          <li>사고 과정: 해결 과정에서 사용한 전략, 참고한 자료, 분석 과정, 도움 요청을 기록합니다.</li>
-          <li>사고 후 반성: 목표 달성 정도를 평가하고 새로 알게 된 점과 어려움, 다음에 보완할 점을 적습니다.</li>
-          <li>장기적 성찰: 이번 학습이 여러분의 미래 목표나 삶과 어떻게 연결되는지 생각해 봅니다.</li>
-          <li>실행 계획 점검: 무엇을 해야 할지, 언제까지 해야 할지, 어떤 자료를 활용할지 정리합니다.</li>
-        </ol>
-
-        <h3>수집된 자료의 활용</h3>
-        <ul>
-          <li>여러분이 작성한 기록은 데이터베이스로 저장되어 사고력 코칭 알고리즘을 개발하는 데 사용됩니다.</li>
-          <li>데이터는 익명화되어 교육 목적 외에는 사용되지 않습니다. 성적 평가와는 무관하며, 여러분의 성장을 돕기 위한 자료입니다.</li>
+          <li>자기조절학습(Self-Regulated Learning)은 목표 설정, 전략 수립, 반성(reflection)과 같은 과정을 통해 학습을 스스로 조절한다고 설명합니다.</li>
+          <li>반성적 저널과 일기 쓰기는 경험을 정리하고 통찰을 얻도록 돕습니다.</li>
+          <li>비판적 사고 루브릭은 문제 정의 → 근거 탐색 → 분석 → 반대 검토 → 결론 도출의 과정을 강조합니다.</li>
         </ul>
       </section>
 
@@ -160,9 +169,7 @@ export default function ThinkingForm({ user, onFeedback }) {
         <textarea
           placeholder="선행 지식·가정: 주제에 대해 알고 있는 내용과 예상되는 어려움은?"
           value={form.priorKnowledge}
-          onChange={(e) =>
-            setForm({ ...form, priorKnowledge: e.target.value })
-          }
+          onChange={(e) => setForm({ ...form, priorKnowledge: e.target.value })}
           className="thinking-textarea"
         />
       </section>
@@ -191,9 +198,7 @@ export default function ThinkingForm({ user, onFeedback }) {
         <textarea
           placeholder="도움 요청 및 협력"
           value={form.collaboration}
-          onChange={(e) =>
-            setForm({ ...form, collaboration: e.target.value })
-          }
+          onChange={(e) => setForm({ ...form, collaboration: e.target.value })}
           className="thinking-textarea"
         />
       </section>
@@ -301,11 +306,7 @@ export default function ThinkingForm({ user, onFeedback }) {
       </section>
 
       {/* --- 제출 버튼 --- */}
-      <button
-        type="submit"
-        disabled={loading}
-        className="thinking-submit-btn"
-      >
+      <button type="submit" disabled={loading} className="thinking-submit-btn">
         {loading ? "저장 중..." : "저장 및 피드백 받기"}
       </button>
     </form>
