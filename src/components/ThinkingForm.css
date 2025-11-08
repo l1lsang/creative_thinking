@@ -39,6 +39,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+  color :#1d4ed8;
 }
 
 .choice-btn {
