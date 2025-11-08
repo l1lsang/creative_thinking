@@ -116,30 +116,52 @@ body, html {
 }
 
 /* ================= BUTTONS ================= */
+/* === 버튼 공통 스타일 === */
 button {
   border: none;
   border-radius: var(--radius);
   padding: 10px 16px;
   background: var(--accent);
-  color: var(--text-dark); /* ✅ 기본 상태에서는 짙은 글씨 */
+  color: #ffffff; /* ✅ 기본 글씨색: 흰색 */
   cursor: pointer;
   font-weight: 600;
   transition: var(--transition);
+  box-shadow: var(--shadow);
 }
 
 button:hover {
   background: var(--accent-hover);
-  color: white;
+  color: #ffffff;
 }
 
-/* 다크모드용 버튼 */
-[data-theme="dark"] button {
-  color: white;
+/* === 네비게이션 버튼 (별도 색상 관리) === */
+.student-nav button {
+  background: var(--card-bg);
+  color: var(--text-light); /* ✅ 검은 글씨 */
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.student-nav button.active,
+.student-nav button:hover {
   background: var(--accent);
+  color: white; /* ✅ hover 시 흰 글씨 */
 }
 
-[data-theme="dark"] button:hover {
-  background: var(--accent-hover);
+/* === 다크모드 전용 버튼 === */
+[data-theme="dark"] button {
+  background: var(--accent);
+  color: #ffffff; /* ✅ 다크모드에서도 흰 글씨 유지 */
+}
+
+[data-theme="dark"] .student-nav button {
+  background: var(--card-dark);
+  color: #f9fafb; /* ✅ 다크모드에서 밝은 텍스트 */
+}
+
+[data-theme="dark"] .student-nav button.active,
+[data-theme="dark"] .student-nav button:hover {
+  background: var(--accent);
   color: white;
 }
 
