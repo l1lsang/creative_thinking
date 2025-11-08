@@ -9,6 +9,7 @@ export default function MyRecords({ user }) {
   const [loading, setLoading] = useState(true);
   const [selectedRecord, setSelectedRecord] = useState(null);
 
+  // 🔹 사용자별 기록 불러오기
   useEffect(() => {
     if (!user?.id) return;
 
@@ -68,7 +69,7 @@ export default function MyRecords({ user }) {
         ))}
       </div>
 
-      {/* === 선택된 기록 상세 보기 === */}
+      {/* === 상세 보기 모달 === */}
       {selectedRecord && (
         <div className="record-modal">
           <div className="record-modal-content">
@@ -80,73 +81,65 @@ export default function MyRecords({ user }) {
             </button>
 
             <h2>🧠 {selectedRecord.topic || "제목 없음"}</h2>
-            <p>
-              <strong>날짜:</strong> {selectedRecord.date}
-            </p>
-            <p>
-              <strong>문제 유형:</strong>{" "}
-              {selectedRecord.problemType?.join(", ")}
-            </p>
-            <p>
-              <strong>목표:</strong> {selectedRecord.goal}
-            </p>
-            <p>
-              <strong>전략:</strong> {selectedRecord.strategy}
-            </p>
-            <p>
-              <strong>근거:</strong> {selectedRecord.sources}
-            </p>
-            <p>
-              <strong>분석:</strong> {selectedRecord.analysis}
-            </p>
-            <p>
-              <strong>협력:</strong> {selectedRecord.collaboration}
-            </p>
-            <p>
-              <strong>통찰:</strong> {selectedRecord.reflection}
-            </p>
-            <p>
-              <strong>어려움:</strong> {selectedRecord.difficulty}
-            </p>
-            <p>
-              <strong>감정:</strong> {selectedRecord.emotion}
-            </p>
-            <p>
-              <strong>장기적 성찰:</strong>{" "}
-              {selectedRecord.longTermMeaning}
-            </p>
-            <p>
-              <strong>실행 계획:</strong> {selectedRecord.todo}
-            </p>
-            <p>
-              <strong>기한:</strong> {selectedRecord.deadline}
-            </p>
+            <p><strong>날짜:</strong> {selectedRecord.date}</p>
+            <p><strong>문제 유형:</strong> {selectedRecord.problemType?.join(", ")}</p>
+            <p><strong>목표:</strong> {selectedRecord.goal}</p>
+            <p><strong>전략:</strong> {selectedRecord.strategy}</p>
+            <p><strong>근거:</strong> {selectedRecord.sources}</p>
+            <p><strong>분석:</strong> {selectedRecord.analysis}</p>
+            <p><strong>협력:</strong> {selectedRecord.collaboration}</p>
+            <p><strong>통찰:</strong> {selectedRecord.reflection}</p>
+            <p><strong>어려움:</strong> {selectedRecord.difficulty}</p>
+            <p><strong>감정:</strong> {selectedRecord.emotion}</p>
+            <p><strong>장기적 성찰:</strong> {selectedRecord.longTermMeaning}</p>
+            <p><strong>실행 계획:</strong> {selectedRecord.todo}</p>
+            <p><strong>기한:</strong> {selectedRecord.deadline}</p>
 
-            {/* === AI 피드백 렌더링 === */}
+            {/* === ✅ AI 피드백 === */}
             {selectedRecord.aiFeedback && (
               <>
                 <h3>🤖 AI 피드백</h3>
+                {(() => {
+                  try {
+                    // 문자열이면 JSON 파싱 시도
+                    const parsed =
+                      typeof selectedRecord.aiFeedback === "string"
+                        ? JSON.parse(selectedRecord.aiFeedback)
+                        : selectedRecord.aiFeedback;
 
-                {typeof selectedRecord.aiFeedback === "object" ? (
-                  <>
-                    {/* JSON 보기 */}
-                    <pre className="ai-feedback-box">
-                      {JSON.stringify(selectedRecord.aiFeedback, null, 2)}
-                    </pre>
+                    // 객체면 JSON + 마인드맵 함께 표시
+                    if (parsed && typeof parsed === "object") {
+                      return (
+                        <>
+                          <pre className="ai-feedback-box">
+                            {JSON.stringify(parsed, null, 2)}
+                          </pre>
 
-                    {/* 🧭 사고의 흐름 시각화 */}
-                    <h3>🗺 사고 흐름 시각화</h3>
-                    <MindMap feedback={selectedRecord.aiFeedback} />
-                  </>
-                ) : (
-                  <pre className="ai-feedback-box">
-                    {String(selectedRecord.aiFeedback)}
-                  </pre>
-                )}
+                          <h3>🗺 사고 흐름 시각화</h3>
+                          <MindMap feedback={parsed} />
+                        </>
+                      );
+                    }
+
+                    // 문자열일 경우
+                    return (
+                      <pre className="ai-feedback-box">
+                        {String(selectedRecord.aiFeedback)}
+                      </pre>
+                    );
+                  } catch (err) {
+                    console.warn("⚠️ aiFeedback 파싱 실패:", err);
+                    return (
+                      <pre className="ai-feedback-box">
+                        {String(selectedRecord.aiFeedback)}
+                      </pre>
+                    );
+                  }
+                })()}
               </>
             )}
 
-            {/* === 점수 (optional) === */}
+            {/* === AI 점수 === */}
             {(selectedRecord.logicScore ||
               selectedRecord.criticalScore ||
               selectedRecord.improvementScore) && (
