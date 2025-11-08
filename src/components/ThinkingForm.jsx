@@ -40,7 +40,7 @@ export default function ThinkingForm({ user, onFeedback }) {
   const [subCategory, setSubCategory] = useState([]);
   const [problemType, setProblemType] = useState([]);
 
-  // ✅ 선택 토글 함수
+  // ✅ 토글 함수 (중복 선택 가능)
   const toggleSelect = (list, setList, value) => {
     setList((prev) =>
       prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
@@ -58,11 +58,10 @@ export default function ThinkingForm({ user, onFeedback }) {
     }));
   };
 
-  // ✅ 제출 함수
+  // ✅ 제출
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!form.date || !form.topic || !form.goal) {
+    if (!form.topic || !form.goal || !form.date) {
       alert("날짜, 주제, 목표를 모두 입력해주세요 ✏️");
       return;
     }
@@ -89,7 +88,7 @@ export default function ThinkingForm({ user, onFeedback }) {
         aiFeedback: aiResult,
       });
 
-      // 3️⃣ 상위 컴포넌트로 전달
+      // 3️⃣ 상위로 전달
       onFeedback(aiResult, fullData);
       alert("기록이 성공적으로 저장되었습니다 ✅");
 
@@ -171,6 +170,7 @@ export default function ThinkingForm({ user, onFeedback }) {
       <section className="thinking-section">
         <h2 className="thinking-title">A. 문제 영역 선택</h2>
 
+        {/* 1️⃣ 문제 영역 */}
         <h3 className="thinking-subtitle">1️⃣ 문제 영역</h3>
         <div className="choice-grid">
           {["문학", "비문학"].map((type) => (
@@ -185,6 +185,7 @@ export default function ThinkingForm({ user, onFeedback }) {
           ))}
         </div>
 
+        {/* 2️⃣ 사고 초점 */}
         <h3 className="thinking-subtitle">2️⃣ 사고 초점</h3>
         <div className="choice-grid">
           {["이해", "시간", "적용"].map((type) => (
@@ -201,6 +202,7 @@ export default function ThinkingForm({ user, onFeedback }) {
           ))}
         </div>
 
+        {/* 3️⃣ 세부 문제 유형 */}
         <h3 className="thinking-subtitle">3️⃣ 세부 문제 유형</h3>
         <div className="choice-grid">
           {["정확성", "시간", "지문", "문제", "연습", "연구"].map((type) => (
@@ -346,7 +348,7 @@ export default function ThinkingForm({ user, onFeedback }) {
         />
       </section>
 
-      {/* --- F. 실행 계획 점검 --- */}
+      {/* --- F. 실행 계획 --- */}
       <section className="thinking-section">
         <h2 className="thinking-title">F. 실행 계획 점검</h2>
         <textarea
@@ -370,6 +372,7 @@ export default function ThinkingForm({ user, onFeedback }) {
         />
       </section>
 
+      {/* --- 제출 버튼 --- */}
       <button className="submit-btn" type="submit" disabled={loading}>
         {loading ? "AI 분석 중..." : "기록 저장 & AI 피드백 받기 🚀"}
       </button>
