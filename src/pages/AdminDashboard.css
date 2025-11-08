@@ -241,3 +241,91 @@
   white-space: pre-wrap;
   color: var(--text);
 }
+.admin-container {
+  padding: 2rem;
+}
+
+.admin-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #1e3a8a;
+  margin-bottom: 0.5rem;
+}
+
+.admin-subtitle {
+  color: #64748b;
+  margin-bottom: 1.5rem;
+}
+
+.admin-chart-box {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  border: 1px solid #e2e8f0;
+}
+
+.admin-records-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.admin-record-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 1rem;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.admin-record-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 12px rgba(59, 130, 246, 0.15);
+}
+
+.record-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+}
+
+.record-modal-content {
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 12px;
+  width: 80%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.close-btn {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  color: #1e3a8a;
+  font-weight: bold;
+}
+
+.ai-feedback-box {
+  background: #f1f5f9;
+  padding: 1rem;
+  border-radius: 8px;
+  white-space: pre-wrap;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.85rem;
+  margin-top: 1rem;
+  border: 1px solid #e2e8f0;
+}
