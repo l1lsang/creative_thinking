@@ -1,74 +1,70 @@
-import {
-  PieChart,
-  Pie,
-  Cell,
-  ResponsiveContainer,
-  Tooltip,
-  Legend,
-} from "recharts";
 import "./FeedbackDisplay.css";
 
-export default function FeedbackDisplay({ feedback, scores }) {
-  // feedback이 없으면 표시하지 않음
+export default function FeedbackDisplay({ feedback }) {
   if (!feedback) return null;
 
-  // GPT 피드백을 구분 (예: 1️⃣ 2️⃣ 3️⃣ 로 나뉜 섹션)
-  const sections = feedback
-    .split(/\d️⃣/)
-    .filter((s) => s.trim().length > 0)
-    .map((s) => s.trim());
+  // ✅ 문자열인지, 객체(JSON)인지 구분
+  if (typeof feedback === "string") {
+    return (
+      <div className="feedback-container">
+        <h3 className="feedback-title">💬 AI 피드백 요약</h3>
+        <p>{feedback}</p>
+      </div>
+    );
+  }
 
-  // 점수 데이터 (기본값 포함)
-  const chartData = [
-    { name: "논리적 사고력", value: scores?.logicScore || 0 },
-    { name: "비판적 사고력", value: scores?.criticalScore || 0 },
-    { name: "개선 방향", value: scores?.improvementScore || 0 },
-  ];
-
-  const COLORS = ["#3b82f6", "#10b981", "#f59e0b"];
+  const { meta, 평가, ["다음_행동(당장_실행_1~3개)"]: nextActions, 다음_행동 } = feedback;
 
   return (
     <div className="feedback-container">
       <h3 className="feedback-title">💬 AI 피드백 요약</h3>
 
-      {/* === 원형 그래프 === */}
-      <div className="feedback-chart">
-        <ResponsiveContainer width="100%" height={260}>
-          <PieChart>
-            <Pie
-              data={chartData}
-              cx="50%"
-              cy="50%"
-              outerRadius={100}
-              dataKey="value"
-              label={({ name, value }) => `${name}: ${value}`}
-            >
-              {chartData.map((entry, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={COLORS[index % COLORS.length]}
-                />
-              ))}
-            </Pie>
-            <Tooltip formatter={(v) => `${v}점`} />
-            <Legend />
-          </PieChart>
-        </ResponsiveContainer>
-      </div>
+      {/* === 메타 정보 === */}
+      {meta && (
+        <div className="feedback-meta">
+          <p><strong>요약:</strong> {meta.요약}</p>
+          <p><strong>톤:</strong> {meta.톤}</p>
+          <p><strong>질문 수:</strong> {meta.총_질문_개수}</p>
+        </div>
+      )}
 
-      {/* === 피드백 텍스트 === */}
-      {sections.length > 0 ? (
-        sections.map((section, i) => {
-          const [title, ...content] = section.split("\n");
-          return (
-            <div key={i} className="feedback-section">
-              <h4>{title}</h4>
-              <p>{content.join("\n")}</p>
+      {/* === 평가 항목 === */}
+      {평가 ? (
+        <div className="feedback-section">
+          <h4>🧩 세부 평가 항목</h4>
+          {Object.entries(평가).map(([key, val]) => (
+            <div key={key} className="feedback-card">
+              <h5>{key}</h5>
+              {val.평가 && <p><strong>평가:</strong> {val.평가}</p>}
+              {val.개선제안 && <p><strong>개선 제안:</strong> {val.개선제안}</p>}
+              {val.질문 && Array.isArray(val.질문) && (
+                <ul>
+                  {val.질문.map((q, i) => (
+                    <li key={i}>❓ {q}</li>
+                  ))}
+                </ul>
+              )}
+              {/* JSON 구조 단순화 대응 */}
+              {val.질문 && typeof val.질문 === "string" && (
+                <p>❓ {val.질문}</p>
+              )}
             </div>
-          );
-        })
+          ))}
+        </div>
       ) : (
-        <p className="feedback-loading">AI 피드백을 불러오는 중이에요...</p>
+        <p>세부 평가 데이터를 불러올 수 없습니다.</p>
+      )}
+
+      {/* === 다음 행동 === */}
+      {(nextActions || 다음_행동) && (
+        <div className="feedback-section">
+          <h4>🚀 다음 행동 제안</h4>
+          <ul>
+            {(nextActions || 다음_행동).map((item, i) => (
+              <li key={i}>✅ {item}</li>
+            ))}
+          </ul>
+        </div>
       )}
     </div>
   );

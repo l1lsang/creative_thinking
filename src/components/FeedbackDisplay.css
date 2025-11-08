@@ -49,3 +49,46 @@
 .feedback-section p:hover {
   background: #f1f5f9;
 }
+.feedback-container {
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 20px;
+  margin: 20px auto;
+  max-width: 900px;
+  color: var(--text);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+}
+
+.feedback-title {
+  font-size: 1.3rem;
+  color: #2563eb;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.feedback-section {
+  margin-top: 20px;
+  padding: 15px;
+  background: var(--bg);
+  border-radius: 12px;
+}
+
+.feedback-card {
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  border-left: 4px solid #3b82f6;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+.feedback-card h5 {
+  color: #1e40af;
+  margin-bottom: 6px;
+}
+
+.feedback-meta {
+  background: var(--bg);
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
