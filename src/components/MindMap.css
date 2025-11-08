@@ -6,3 +6,16 @@
   box-shadow: 0 3px 10px rgba(0,0,0,0.1);
   background: var(--card-bg);
 }
+.react-flow__node-custom {
+  transition: transform 0.2s ease;
+}
+.react-flow__node-custom:hover {
+  transform: scale(1.05);
+}
+[data-theme="dark"] .react-flow__node-custom {
+  background: #1f2937 !important;
+  color: #f9fafb !important;
+}
+[data-theme="dark"] .react-flow__background {
+  background-color: #111827;
+}
