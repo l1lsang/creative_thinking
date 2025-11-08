@@ -40,7 +40,7 @@ export default function ThinkingForm({ user, onFeedback }) {
   const [subCategory, setSubCategory] = useState([]);
   const [problemType, setProblemType] = useState([]);
 
-  // ✅ 토글 함수 (중복 선택 가능)
+  // ✅ 토글 함수
   const toggleSelect = (list, setList, value) => {
     setList((prev) =>
       prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
@@ -78,21 +78,17 @@ export default function ThinkingForm({ user, onFeedback }) {
         problemType,
       };
 
-      // 1️⃣ AI 피드백 생성
       const aiResult = await getThinkingFeedback(fullData);
 
-      // 2️⃣ Firestore 저장
       await addDoc(collection(db, "thinkingRecords"), {
         ...fullData,
         createdAt: serverTimestamp(),
         aiFeedback: aiResult,
       });
 
-      // 3️⃣ 상위로 전달
       onFeedback(aiResult, fullData);
       alert("기록이 성공적으로 저장되었습니다 ✅");
 
-      // 4️⃣ 폼 초기화
       setForm({
         date: "",
         topic: "",
@@ -176,7 +172,7 @@ export default function ThinkingForm({ user, onFeedback }) {
           {["문학", "비문학"].map((type) => (
             <button
               key={type}
-              type="button"
+              type="button" // ✅ 새로고침 방지
               className={`choice-btn ${category === type ? "selected" : ""}`}
               onClick={() => setCategory(type)}
             >
@@ -191,7 +187,7 @@ export default function ThinkingForm({ user, onFeedback }) {
           {["이해", "시간", "적용"].map((type) => (
             <button
               key={type}
-              type="button"
+              type="button" // ✅ 새로고침 방지
               className={`choice-btn ${
                 subCategory.includes(type) ? "selected" : ""
               }`}
@@ -208,7 +204,7 @@ export default function ThinkingForm({ user, onFeedback }) {
           {["정확성", "시간", "지문", "문제", "연습", "연구"].map((type) => (
             <button
               key={type}
-              type="button"
+              type="button" // ✅ 새로고침 방지
               className={`choice-btn ${
                 problemType.includes(type) ? "selected" : ""
               }`}
