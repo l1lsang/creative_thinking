@@ -195,3 +195,30 @@
   background: #2563eb;
   color: #fff;
 }
+.thinking-input-group {
+  margin-bottom: 12px;
+}
+
+.thinking-input-group label {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  font-weight: 600;
+  color: #1f2937;
+  font-size: 0.95rem;
+}
+
+.thinking-input {
+  margin-top: 6px;
+  padding: 8px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  width: 100%;
+  font-size: 0.95rem;
+}
+
+.thinking-input:focus {
+  border-color: #3b82f6;
+  outline: none;
+  box-shadow: 0 0 4px rgba(59, 130, 246, 0.3);
+}

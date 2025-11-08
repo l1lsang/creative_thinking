@@ -40,7 +40,7 @@ export default function ThinkingForm({ user, onFeedback }) {
   const [subCategory, setSubCategory] = useState([]);
   const [problemType, setProblemType] = useState([]);
 
-  // ✅ 토글 함수 (중복 선택 가능)
+  // ✅ 선택 토글 함수
   const toggleSelect = (list, setList, value) => {
     setList((prev) =>
       prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
@@ -58,11 +58,12 @@ export default function ThinkingForm({ user, onFeedback }) {
     }));
   };
 
-  // ✅ 제출
+  // ✅ 제출 함수
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.topic || !form.goal) {
-      alert("주제와 목표를 입력해주세요 ✏️");
+
+    if (!form.date || !form.topic || !form.goal) {
+      alert("날짜, 주제, 목표를 모두 입력해주세요 ✏️");
       return;
     }
 
@@ -88,7 +89,7 @@ export default function ThinkingForm({ user, onFeedback }) {
         aiFeedback: aiResult,
       });
 
-      // 3️⃣ 상위로 전달
+      // 3️⃣ 상위 컴포넌트로 전달
       onFeedback(aiResult, fullData);
       alert("기록이 성공적으로 저장되었습니다 ✅");
 
@@ -134,11 +135,42 @@ export default function ThinkingForm({ user, onFeedback }) {
     <form className="thinking-form" onSubmit={handleSubmit}>
       <h1 className="thinking-title-main">🧠 사고 훈련 기록지</h1>
 
+      {/* --- 기본 정보 입력 --- */}
+      <section className="thinking-section">
+        <h2 className="thinking-title">🗓️ 기본 정보 입력</h2>
+
+        <div className="thinking-input-group">
+          <label>
+            날짜:
+            <input
+              type="date"
+              value={form.date}
+              onChange={(e) => setForm({ ...form, date: e.target.value })}
+              className="thinking-input"
+              required
+            />
+          </label>
+        </div>
+
+        <div className="thinking-input-group">
+          <label>
+            수업/토론 주제:
+            <input
+              type="text"
+              placeholder="예: 환경 보호 토론, 문학 속 인물 분석 등"
+              value={form.topic}
+              onChange={(e) => setForm({ ...form, topic: e.target.value })}
+              className="thinking-input"
+              required
+            />
+          </label>
+        </div>
+      </section>
+
       {/* --- A. 문제 영역 선택 --- */}
       <section className="thinking-section">
         <h2 className="thinking-title">A. 문제 영역 선택</h2>
 
-        {/* 1️⃣ 문학 / 비문학 */}
         <h3 className="thinking-subtitle">1️⃣ 문제 영역</h3>
         <div className="choice-grid">
           {["문학", "비문학"].map((type) => (
@@ -153,7 +185,6 @@ export default function ThinkingForm({ user, onFeedback }) {
           ))}
         </div>
 
-        {/* 2️⃣ 사고 초점 */}
         <h3 className="thinking-subtitle">2️⃣ 사고 초점</h3>
         <div className="choice-grid">
           {["이해", "시간", "적용"].map((type) => (
@@ -170,7 +201,6 @@ export default function ThinkingForm({ user, onFeedback }) {
           ))}
         </div>
 
-        {/* 3️⃣ 세부 문제 유형 */}
         <h3 className="thinking-subtitle">3️⃣ 세부 문제 유형</h3>
         <div className="choice-grid">
           {["정확성", "시간", "지문", "문제", "연습", "연구"].map((type) => (
@@ -316,7 +346,7 @@ export default function ThinkingForm({ user, onFeedback }) {
         />
       </section>
 
-      {/* --- F. 실행 계획 --- */}
+      {/* --- F. 실행 계획 점검 --- */}
       <section className="thinking-section">
         <h2 className="thinking-title">F. 실행 계획 점검</h2>
         <textarea
