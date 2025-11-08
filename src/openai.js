@@ -1,5 +1,5 @@
 // src/openai.js
-import json5 from "json5"; // ⚠️ JSON 파싱 보강용 (설치 필요: npm i json5)
+import json5 from "json5"; // ⚙️ JSON 파싱 보강 (npm i json5 필요)
 
 // ====== SYSTEM PROMPT (코치 역할) ======
 const SYSTEM_PROMPT = `
@@ -37,7 +37,7 @@ const USER_PROMPT_TEMPLATE = `
 출력은 반드시 아래 JSON 스키마(키/타입/필수 여부)와 동일한 구조로만 응답하라.
 `;
 
-// ====== 사용자 입력을 JSON 문자열로 변환하는 함수 ======
+// ====== 사용자 입력 → 프롬프트 변환 ======
 function buildUserPrompt(studentRecord) {
   return USER_PROMPT_TEMPLATE.replace(
     "{student_record_json}",
@@ -45,10 +45,10 @@ function buildUserPrompt(studentRecord) {
   );
 }
 
-// ====== GPT 호출 (질문형 JSON 피드백) ======
+// ====== 🧠 사고력 피드백 생성 ======
 export async function getThinkingFeedback(formData) {
   try {
-    // 🧩 formData → student_record 형태로 변환
+    // formData → student_record 구조로 변환
     const studentRecord = {
       "A_기본정보": {
         "날짜": formData.date || "",
@@ -67,7 +67,7 @@ export async function getThinkingFeedback(formData) {
         "중간메모": formData.analysis || "",
       },
       "D_사고후반성": {
-        "성과평가_점수_0to100": Number(formData.evaluation) * 20 || 0, // 1~5점 → 0~100 환산
+        "성과평가_점수_0to100": Number(formData.evaluation) * 20 || 0,
         "성과근거": formData.reflection || "",
         "새로알게된내용": formData.reflection || "",
         "어려움": formData.difficulty || "",
@@ -101,16 +101,19 @@ export async function getThinkingFeedback(formData) {
 
     const data = await response.json();
     const content = data.choices?.[0]?.message?.content?.trim();
-
     if (!content) throw new Error("응답 없음");
 
-    // ✅ GPT가 준 JSON 문자열을 파싱
+    // ✅ GPT JSON 파싱
     let parsed;
     try {
       parsed = json5.parse(content);
     } catch (err) {
       console.warn("⚠️ JSON 파싱 오류, 원문 출력:", content);
-      parsed = { meta: { 요약: "파싱 실패", 톤: "따뜻한_코치", 총_질문_개수: 0 }, 평가: {}, "다음_행동(당장_실행_1~3개)": [] };
+      parsed = {
+        meta: { 요약: "파싱 실패", 톤: "따뜻한_코치", 총_질문_개수: 0 },
+        평가: {},
+        "다음_행동(당장_실행_1~3개)": [],
+      };
     }
 
     return parsed;
@@ -121,5 +124,59 @@ export async function getThinkingFeedback(formData) {
       평가: {},
       "다음_행동(당장_실행_1~3개)": [],
     };
+  }
+}
+
+// ====== 📊 관리자 요약 함수 ======
+export async function getAdminSummary(records) {
+  try {
+    const summaryText = records
+      .map(
+        (r, i) =>
+          `(${i + 1}) ${r.topic || "제목 없음"} - 목표: ${r.goal || "-"}, 통찰: ${
+            r.reflection || "-"
+          }`
+      )
+      .slice(0, 20)
+      .join("\n");
+
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "system",
+            content:
+              "너는 교육 데이터 분석가이자 사고력 코치야. 학생들의 사고 훈련 기록을 종합해서 주요 패턴, 강점, 개선점, 다음 목표를 요약해줘.",
+          },
+          {
+            role: "user",
+            content: `
+다음은 학생들의 사고 기록이야:
+${summaryText}
+
+이 데이터를 분석해서 아래 항목으로 요약해줘.
+1️⃣ 주요 경향
+2️⃣ 공통 강점
+3️⃣ 자주 드러나는 어려움
+4️⃣ 다음 단계 제안
+          `,
+          },
+        ],
+        temperature: 0.6,
+        max_tokens: 800,
+      }),
+    });
+
+    const data = await response.json();
+    return data.choices?.[0]?.message?.content || "AI 요약 생성 실패 😢";
+  } catch (error) {
+    console.error("AI 요약 오류:", error);
+    return "요약 중 오류 발생 ❌";
   }
 }
