@@ -1,24 +1,35 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Login from "./components/Login.jsx";
 import Register from "./components/Register.jsx";
 import ThinkingForm from "./components/ThinkingForm.jsx";
 import FeedbackDisplay from "./components/FeedbackDisplay.jsx";
 import Header from "./components/Header.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
+import MyRecords from "./pages/MyRecords.jsx";
 import { adminIds } from "./config/adminConfig.js";
 import "./App.css";
 
 export default function App() {
   const [user, setUser] = useState(null);
-  const [page, setPage] = useState("login");
+  const [page, setPage] = useState("login"); // login | register | form | records
   const [feedback, setFeedback] = useState("");
   const [theme, setTheme] = useState("light");
+
+  // ✅ 로그인 유지 (새로고침 시)
+  useEffect(() => {
+    const savedUser = localStorage.getItem("user");
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+      setPage("form");
+    }
+  }, []);
 
   // ✅ 로그아웃
   const handleLogout = () => {
     setUser(null);
     setPage("login");
     setFeedback("");
+    localStorage.removeItem("user");
   };
 
   // ✅ 다크모드 토글
@@ -33,11 +44,18 @@ export default function App() {
     setFeedback(aiFeedback);
   };
 
-  // ✅ 관리자 여부 확인
+  // ✅ 기록 작성 완료 시 “나의 기록”으로 자동 전환
+  const handleFormComplete = (aiFeedback) => {
+    setFeedback(aiFeedback);
+    setPage("records"); // ✅ 자동 이동
+  };
+
+  // ✅ 관리자 여부
   const isAdmin = user && adminIds.includes(user.id);
 
   return (
     <div className={`app-container ${theme}`}>
+      {/* 로그인 안 한 상태 */}
       {!user ? (
         page === "login" ? (
           <Login
@@ -50,15 +68,6 @@ export default function App() {
             onSwitchToLogin={() => setPage("login")}
           />
         )
-      ) : isAdmin ? (
-        <>
-          <Header
-            onLogout={handleLogout}
-            onToggleTheme={toggleTheme}
-            theme={theme}
-          />
-          <AdminDashboard />
-        </>
       ) : (
         <>
           <Header
@@ -66,8 +75,39 @@ export default function App() {
             onToggleTheme={toggleTheme}
             theme={theme}
           />
-          <ThinkingForm user={user} onFeedback={handleFeedback} />
-          <FeedbackDisplay feedback={feedback} />
+
+          {/* ✅ 관리자 */}
+          {isAdmin ? (
+            <AdminDashboard />
+          ) : (
+            <>
+              {/* 학생용 네비게이션 */}
+              <nav className="student-nav">
+                <button
+                  className={page === "form" ? "active" : ""}
+                  onClick={() => setPage("form")}
+                >
+                  ✍️ 기록 작성
+                </button>
+                <button
+                  className={page === "records" ? "active" : ""}
+                  onClick={() => setPage("records")}
+                >
+                  📘 나의 기록
+                </button>
+              </nav>
+
+              {/* ✅ 학생 페이지 분기 */}
+              {page === "form" ? (
+                <>
+                  <ThinkingForm user={user} onFeedback={handleFormComplete} />
+                  <FeedbackDisplay feedback={feedback} />
+                </>
+              ) : (
+                <MyRecords user={user} />
+              )}
+            </>
+          )}
         </>
       )}
     </div>

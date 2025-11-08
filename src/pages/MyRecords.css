@@ -1,0 +1,84 @@
+.myrecords-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+  color: var(--text);
+}
+
+.myrecords-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #2563eb;
+  margin-bottom: 10px;
+}
+
+.myrecords-subtitle {
+  color: #64748b;
+  margin-bottom: 20px;
+}
+
+.myrecords-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.myrecords-card {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.myrecords-card:hover {
+  transform: translateY(-3px);
+}
+
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #475569;
+}
+
+/* 모달 */
+.record-modal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.record-modal-content {
+  background: white;
+  color: black;
+  border-radius: 12px;
+  padding: 20px;
+  width: 90%;
+  max-width: 700px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+}
+
+.close-btn {
+  float: right;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  color: #555;
+}
+
+.ai-feedback-box {
+  background: #f8fafc;
+  padding: 10px;
+  border-radius: 8px;
+  white-space: pre-wrap;
+  font-size: 0.95rem;
+}
