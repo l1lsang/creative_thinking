@@ -1,4 +1,3 @@
-// src/components/MindMap.jsx
 import React, { useMemo } from "react";
 import ReactFlow, {
   Background,
@@ -8,30 +7,28 @@ import ReactFlow, {
 } from "reactflow";
 import "reactflow/dist/style.css";
 
-export default function MindMap({ form }) {
+export default function MindMap({ form, aiMap }) {
   if (!form) return null;
 
   const category = form.category || "선택 없음";
   const subCategory = form.subCategory || [];
   const problemType = form.problemType || [];
 
-  // 🌿 커스텀 노드 (모양/색/애니메이션)
+  // 🌿 커스텀 노드
   const CustomNode = ({ data }) => (
     <div
       style={{
-        background: data.level === "root" ? "var(--accent)" : "var(--card-bg)",
-        color: data.level === "root" ? "white" : "var(--text-light)",
-        border:
-          data.level === "leaf"
-            ? "1.5px dashed var(--accent)"
-            : "2px solid var(--accent)",
+        background: data.level === "root" ? "#2563eb" : "white",
+        color: data.level === "root" ? "white" : "#1f2937",
+        border: data.level === "leaf"
+          ? "1.5px dashed #60a5fa"
+          : "2px solid #2563eb",
         padding: "10px 15px",
         borderRadius: 12,
         fontWeight: 600,
         textAlign: "center",
         boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
-        transition: "all 0.3s ease",
-        width: 220,
+        width: 200,
         whiteSpace: "pre-wrap",
       }}
     >
@@ -47,7 +44,7 @@ export default function MindMap({ form }) {
     const baseX = 300;
     const baseY = 100;
 
-    // 1️⃣ 문학/비문학
+    // 선택 기반 루트
     nodesArr.push({
       id: "root",
       type: "custom",
@@ -55,7 +52,7 @@ export default function MindMap({ form }) {
       data: { label: `📚 ${category}`, level: "root" },
     });
 
-    // 2️⃣ 이해/시간/적용
+    // 이해/시간/적용
     subCategory.forEach((sub, i) => {
       nodesArr.push({
         id: `sub-${i}`,
@@ -65,7 +62,7 @@ export default function MindMap({ form }) {
       });
     });
 
-    // 3️⃣ 세부유형
+    // 세부 유형
     let idx = 0;
     subCategory.forEach((sub, i) => {
       problemType.forEach((p, j) => {
@@ -82,18 +79,31 @@ export default function MindMap({ form }) {
       });
     });
 
+    // 🧠 AI 마인드맵도 아래쪽에 추가
+    if (aiMap && aiMap.length > 0) {
+      aiMap.forEach((line, i) => {
+        nodesArr.push({
+          id: `ai-${i}`,
+          type: "custom",
+          position: { x: baseX + 400, y: baseY + i * 80 },
+          data: { label: `🤖 ${line}`, level: "branch" },
+        });
+      });
+    }
+
     return nodesArr;
-  }, [category, subCategory, problemType]);
+  }, [category, subCategory, problemType, aiMap]);
 
   // 🌈 엣지 구성
   const edges = useMemo(() => {
     const edgeArr = [];
+
     subCategory.forEach((_, i) => {
       edgeArr.push({
         id: `e-root-${i}`,
         source: "root",
         target: `sub-${i}`,
-        style: { stroke: "var(--accent)", strokeWidth: 2 },
+        style: { stroke: "#2563eb", strokeWidth: 2 },
       });
     });
 
@@ -104,14 +114,26 @@ export default function MindMap({ form }) {
           id: `e-sub-${i}-${idx}`,
           source: `sub-${i}`,
           target: `leaf-${idx}`,
-          style: { stroke: "var(--accent)", strokeWidth: 1.5 },
+          style: { stroke: "#60a5fa", strokeWidth: 1.5 },
         });
         idx++;
       });
     });
 
+    // AI 마인드맵 연결
+    if (aiMap && aiMap.length > 0) {
+      aiMap.forEach((_, i) => {
+        edgeArr.push({
+          id: `e-ai-${i}`,
+          source: "root",
+          target: `ai-${i}`,
+          style: { stroke: "#22d3ee", strokeWidth: 2, strokeDasharray: "5 5" },
+        });
+      });
+    }
+
     return edgeArr;
-  }, [subCategory, problemType]);
+  }, [subCategory, problemType, aiMap]);
 
   return (
     <div
@@ -120,14 +142,14 @@ export default function MindMap({ form }) {
         height: "600px",
         marginTop: "30px",
         borderRadius: "10px",
-        background: "var(--bg-light)",
+        background: "#f8fafc",
         boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
       }}
     >
       <h3
         style={{
           textAlign: "center",
-          color: "var(--accent)",
+          color: "#2563eb",
           paddingTop: "10px",
         }}
       >
@@ -142,7 +164,9 @@ export default function MindMap({ form }) {
       >
         <MiniMap
           nodeColor={(n) =>
-            n.data.level === "root"
+            n.id.startsWith("ai")
+              ? "#22d3ee"
+              : n.data.level === "root"
               ? "#2563eb"
               : n.data.level === "branch"
               ? "#60a5fa"

@@ -1,3 +1,5 @@
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import "./FeedbackDisplay.css";
 
 export default function FeedbackDisplay({ feedback }) {
@@ -7,13 +9,11 @@ export default function FeedbackDisplay({ feedback }) {
     <div className="feedback-display">
       <h2 className="feedback-title">🤖 AI 사고 피드백</h2>
 
-      {/* 줄바꿈, 문단 유지 */}
-      <div className="feedback-text">
-        <p style={{ whiteSpace: "pre-wrap", lineHeight: "1.7" }}>
+      <div className="feedback-markdown">
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>
           {feedback}
-        </p>
+        </ReactMarkdown>
       </div>
     </div>
   );
 }
-

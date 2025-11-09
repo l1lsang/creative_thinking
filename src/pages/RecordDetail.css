@@ -1,22 +1,21 @@
 .record-detail-container {
-  max-width: 800px;
-  margin: 40px auto;
-  padding: 24px;
-  background: var(--card-bg);
-  border-radius: 14px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-  color: var(--text);
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 30px 20px;
+  background: #f9fafb;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
 .back-btn {
   background: #2563eb;
   color: white;
   border: none;
+  padding: 10px 16px;
   border-radius: 8px;
-  padding: 8px 14px;
-  margin-bottom: 20px;
   cursor: pointer;
-  transition: background 0.2s;
+  margin-bottom: 20px;
+  font-weight: bold;
 }
 
 .back-btn:hover {
@@ -24,36 +23,58 @@
 }
 
 .record-title {
-  font-size: 1.6rem;
-  color: #2563eb;
+  font-size: 1.8rem;
   font-weight: 700;
   margin-bottom: 10px;
 }
 
-.record-author,
-.record-date {
-  font-size: 0.9rem;
-  color: #64748b;
-  margin-bottom: 8px;
+.record-author, .record-date {
+  color: #475569;
+  font-size: 0.95rem;
 }
 
 .record-section {
-  margin-top: 24px;
-  background: var(--bg);
-  padding: 16px;
-  border-radius: 10px;
+  margin-top: 25px;
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px 20px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
 
 .record-section h2 {
-  color: #1d4ed8;
-  margin-bottom: 8px;
+  color: #2563eb;
+  margin-bottom: 10px;
 }
 
 .ai-feedback-box {
-  background: #f9fafb;
-  border-radius: 8px;
-  padding: 12px;
-  font-size: 0.95rem;
-  line-height: 1.6;
+  margin-top: 10px;
+}
+
+.feedback-summary {
+  font-weight: 600;
+  cursor: pointer;
+  color: #2563eb;
+  margin-bottom: 10px;
+}
+
+.ai-feedback-markdown {
+  background: #f8fafc;
+  border-left: 4px solid #60a5fa;
+  padding: 15px;
+  border-radius: 6px;
   white-space: pre-wrap;
+  line-height: 1.8;
+  overflow-x: auto;
+}
+
+.ai-feedback-markdown h1, .ai-feedback-markdown h2 {
+  margin-top: 1rem;
+}
+
+.ai-feedback-markdown ul {
+  padding-left: 1.2rem;
+}
+
+.ai-feedback-markdown strong {
+  color: #2563eb;
 }

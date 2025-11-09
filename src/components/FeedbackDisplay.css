@@ -33,3 +33,43 @@
 .feedback-text p {
   margin: 0;
 }
+.feedback-display {
+  background: #f9fafb;
+  border-radius: 16px;
+  padding: 24px;
+  margin-top: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  text-align: left;
+  max-width: 800px;
+  margin: 20px auto;
+}
+
+.feedback-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2563eb;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.feedback-markdown {
+  background: #fff;
+  padding: 16px 20px;
+  border-radius: 12px;
+  border-left: 4px solid #3b82f6;
+  white-space: pre-wrap;
+  line-height: 1.8;
+}
+
+.feedback-markdown h1, h2, h3 {
+  color: #1f2937;
+  margin-top: 1em;
+}
+
+.feedback-markdown ul {
+  padding-left: 1.2rem;
+}
+
+.feedback-markdown strong {
+  color: #2563eb;
+}

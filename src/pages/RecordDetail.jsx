@@ -1,8 +1,9 @@
-// src/pages/RecordDetail.jsx
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase.js";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import "./RecordDetail.css";
 
 export default function RecordDetail() {
@@ -13,14 +14,19 @@ export default function RecordDetail() {
 
   useEffect(() => {
     const fetchRecord = async () => {
-      const docRef = doc(db, "thinkingRecords", recordId);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        setRecord(docSnap.data());
-      } else {
-        console.log("❌ Document not found");
+      try {
+        const docRef = doc(db, "thinkingRecords", recordId);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setRecord(docSnap.data());
+        } else {
+          console.log("❌ Document not found");
+        }
+      } catch (err) {
+        console.error("Firestore fetch error:", err);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
     fetchRecord();
   }, [recordId]);
@@ -28,12 +34,17 @@ export default function RecordDetail() {
   if (loading) return <p className="record-loading">로딩 중...</p>;
   if (!record) return <p>기록을 찾을 수 없습니다.</p>;
 
+  const createdAt = record.createdAt?.seconds
+    ? new Date(record.createdAt.seconds * 1000).toLocaleString()
+    : "등록일 없음";
+
   return (
     <div className="record-detail-container">
       <button onClick={() => navigate(-1)} className="back-btn">← 목록으로</button>
+
       <h1 className="record-title">{record.topic || "제목 없음"}</h1>
       <p className="record-author"><strong>작성자:</strong> {record.email || record.userId}</p>
-      <p className="record-date"><strong>작성일:</strong> {new Date(record.createdAt.seconds * 1000).toLocaleString()}</p>
+      <p className="record-date"><strong>작성일:</strong> {createdAt}</p>
 
       <section className="record-section">
         <h2>🎯 목표</h2>
@@ -42,7 +53,7 @@ export default function RecordDetail() {
 
       <section className="record-section">
         <h2>💭 사고 과정</h2>
-        <p>{record.thinkingProcess || "내용 없음"}</p>
+        <p>{record.strategy || record.thinkingProcess || "내용 없음"}</p>
       </section>
 
       <section className="record-section">
@@ -54,7 +65,15 @@ export default function RecordDetail() {
         <h2>🧠 AI 피드백</h2>
         <div className="ai-feedback-box">
           {record.aiFeedback ? (
-            <pre>{record.aiFeedback}</pre>
+            <details open>
+              <summary className="feedback-summary">📖 AI 피드백 열기/닫기</summary>
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                className="ai-feedback-markdown"
+              >
+                {record.aiFeedback}
+              </ReactMarkdown>
+            </details>
           ) : (
             <p>아직 피드백이 생성되지 않았습니다.</p>
           )}
