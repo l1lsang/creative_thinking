@@ -222,3 +222,20 @@
   outline: none;
   box-shadow: 0 0 4px rgba(59, 130, 246, 0.3);
 }
+input[type="date"] {
+  color-scheme: light dark; /* 다크모드 대응 */
+  background-color: white;
+  color: #1f2937; /* 텍스트 색 */
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.95rem;
+  width: 220px;
+  cursor: pointer;
+}
+
+/* ⬇️ Chrome, Edge, Safari 전용 - 달력 아이콘 색 */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(40%) sepia(100%) saturate(400%) hue-rotate(200deg);
+  cursor: pointer;
+}
