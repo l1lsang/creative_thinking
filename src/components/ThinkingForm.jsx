@@ -2,10 +2,12 @@ import { useState } from "react";
 import { db } from "../firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { getThinkingFeedback } from "../openai";
+import MindMap from "../components/MindMap";
 import "./ThinkingForm.css";
 
 export default function ThinkingForm({ user, onFeedback }) {
   const [loading, setLoading] = useState(false);
+  const [aiMap, setAiMap] = useState([]); // 🤖 AI 개념 노드 저장용
 
   // ✅ 폼 상태
   const [form, setForm] = useState({
@@ -58,7 +60,7 @@ export default function ThinkingForm({ user, onFeedback }) {
     }));
   };
 
-  // ✅ 제출
+  // ✅ 제출 함수
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.topic || !form.goal || !form.date) {
@@ -78,17 +80,37 @@ export default function ThinkingForm({ user, onFeedback }) {
         problemType,
       };
 
+      // 🔹 1️⃣ OpenAI 피드백 생성
       const aiResult = await getThinkingFeedback(fullData);
 
+      // 🔹 2️⃣ GPT 피드백에서 주요 문장 뽑아서 aiMap 구성
+      const aiLines = aiResult
+        .split("\n")
+        .filter(
+          (line) =>
+            line.includes("🌟") ||
+            line.includes("💪") ||
+            line.includes("🧩") ||
+            line.includes("🌿")
+        )
+        .map((line) => line.replace(/[#*]/g, "").trim());
+
+      setAiMap(aiLines);
+
+      // 🔹 3️⃣ Firestore 저장
       await addDoc(collection(db, "thinkingRecords"), {
         ...fullData,
         createdAt: serverTimestamp(),
         aiFeedback: aiResult,
+        aiMap: aiLines,
       });
 
+      // 🔹 4️⃣ 상위 콜백 실행
       onFeedback(aiResult, fullData);
+
       alert("기록이 성공적으로 저장되었습니다 ✅");
 
+      // 🔹 폼 초기화
       setForm({
         date: "",
         topic: "",
@@ -130,7 +152,7 @@ export default function ThinkingForm({ user, onFeedback }) {
     <form className="thinking-form" onSubmit={handleSubmit}>
       <h1 className="thinking-title-main">🧠 사고 훈련 기록지</h1>
 
-      {/* --- 기본 정보 입력 --- */}
+      {/* --- 기본 정보 --- */}
       <section className="thinking-section">
         <h2 className="thinking-title">🗓️ 기본 정보 입력</h2>
 
@@ -166,13 +188,12 @@ export default function ThinkingForm({ user, onFeedback }) {
       <section className="thinking-section">
         <h2 className="thinking-title">A. 문제 영역 선택</h2>
 
-        {/* 1️⃣ 문제 영역 */}
         <h3 className="thinking-subtitle">1️⃣ 문제 영역</h3>
         <div className="choice-grid">
           {["문학", "비문학"].map((type) => (
             <button
               key={type}
-              type="button" // ✅ 새로고침 방지
+              type="button"
               className={`choice-btn ${category === type ? "selected" : ""}`}
               onClick={() => setCategory(type)}
             >
@@ -181,13 +202,12 @@ export default function ThinkingForm({ user, onFeedback }) {
           ))}
         </div>
 
-        {/* 2️⃣ 사고 초점 */}
         <h3 className="thinking-subtitle">2️⃣ 사고 초점</h3>
         <div className="choice-grid">
           {["이해", "시간", "적용"].map((type) => (
             <button
               key={type}
-              type="button" // ✅ 새로고침 방지
+              type="button"
               className={`choice-btn ${
                 subCategory.includes(type) ? "selected" : ""
               }`}
@@ -198,13 +218,12 @@ export default function ThinkingForm({ user, onFeedback }) {
           ))}
         </div>
 
-        {/* 3️⃣ 세부 문제 유형 */}
         <h3 className="thinking-subtitle">3️⃣ 세부 문제 유형</h3>
         <div className="choice-grid">
           {["정확성", "시간", "지문", "문제", "연습", "연구"].map((type) => (
             <button
               key={type}
-              type="button" // ✅ 새로고침 방지
+              type="button"
               className={`choice-btn ${
                 problemType.includes(type) ? "selected" : ""
               }`}
@@ -215,6 +234,14 @@ export default function ThinkingForm({ user, onFeedback }) {
           ))}
         </div>
       </section>
+
+      {/* 🌳 실시간 마인드맵 표시 */}
+      {(category || subCategory.length > 0 || problemType.length > 0) && (
+        <MindMap
+          form={{ category, subCategory, problemType }}
+          aiMap={aiMap}
+        />
+      )}
 
       {/* --- B. 사전 사고 --- */}
       <section className="thinking-section">
