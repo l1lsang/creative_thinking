@@ -85,7 +85,7 @@ ${JSON.stringify(form, null, 2)}
 
     // 💬 GPT 호출
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4o-mini",
       messages: [{ role: "user", content: prompt }],
     });
 
