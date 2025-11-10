@@ -102,7 +102,6 @@ export default function ThinkingForm({ user, onFeedback }) {
         ...fullData,
         createdAt: serverTimestamp(),
         aiFeedback: aiResult,
-        aiMap: aiLines,
       });
 
       // 🔹 4️⃣ 상위 콜백 실행
