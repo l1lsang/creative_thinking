@@ -58,14 +58,20 @@ export default function MyRecords({ user }) {
                 {r.category || "분류 없음"} · {r.subCategory?.join(", ") || "없음"}
               </p>
               <p className="record-goal">
-                🎯 {r.goal?.slice(0, 30) || "목표 없음"}
-                {r.goal?.length > 30 ? "..." : ""}
+                🎯 {r.goal?.slice(0, 40) || "목표 없음"}
+                {r.goal?.length > 40 ? "..." : ""}
               </p>
-              {r.aiFeedback ? (
-                <p className="record-feedback-preview">
-                  {r.aiFeedback.slice(0, 80)}...
-                </p>
-              ) : (
+
+              {typeof r.aiFeedback === "string" && (
+                <div className="record-feedback-preview markdown-preview">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {r.aiFeedback.length > 180
+                      ? r.aiFeedback.slice(0, 180) + "..."
+                      : r.aiFeedback}
+                  </ReactMarkdown>
+                </div>
+              )}
+              {!r.aiFeedback && (
                 <p className="record-feedback-none">🤖 AI 피드백 없음</p>
               )}
             </div>
@@ -77,7 +83,7 @@ export default function MyRecords({ user }) {
         <div className="modal-overlay" onClick={() => setSelected(null)}>
           <div
             className="modal-content"
-            onClick={(e) => e.stopPropagation()} // 모달 내부 클릭 시 닫히지 않게
+            onClick={(e) => e.stopPropagation()}
           >
             <button className="close-btn" onClick={() => setSelected(null)}>
               ✖ 닫기
@@ -91,10 +97,10 @@ export default function MyRecords({ user }) {
             <p><b>성찰:</b> {selected.reflection}</p>
             <p><b>어려움:</b> {selected.difficulty}</p>
 
-            {selected.aiFeedback && (
+            {typeof selected.aiFeedback === "string" && (
               <>
                 <h4 className="ai-feedback-title">🤖 AI 피드백</h4>
-                <div className="ai-feedback-box">
+                <div className="ai-feedback-box markdown-full">
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>
                     {selected.aiFeedback}
                   </ReactMarkdown>
